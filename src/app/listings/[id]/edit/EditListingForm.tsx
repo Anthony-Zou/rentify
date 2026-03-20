@@ -22,7 +22,27 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  async function handleDelete() {
+    if (!confirm('Delete this listing? This cannot be undone.')) return
+    setDeleting(true)
+    const supabase = createClient()
+
+    if (listing.image_url) {
+      const oldPath = listing.image_url.split('/object/public/listing-image/')[1]
+      if (oldPath) await supabase.storage.from('listing-image').remove([decodeURIComponent(oldPath)])
+    }
+
+    const { error: deleteError } = await supabase.from('listings').delete().eq('id', listing.id)
+    if (deleteError) {
+      setError(deleteError.message)
+      setDeleting(false)
+      return
+    }
+    router.push('/profile')
+  }
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -60,7 +80,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
         imageUrl = publicUrl
       }
 
-      const { error: updateError } = await supabase
+      const { data: updated, error: updateError } = await supabase
         .from('listings')
         .update({
           title,
@@ -69,8 +89,11 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
           image_url: imageUrl,
         })
         .eq('id', listing.id)
+        .select('id')
+        .single()
 
       if (updateError) throw new Error(updateError.message)
+      if (!updated) throw new Error('Update failed — check that you have permission to edit this listing.')
 
       router.push(`/listings/${listing.id}`)
       router.refresh()
@@ -158,10 +181,19 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
 
       <button
         type="submit"
-        disabled={loading}
+        disabled={loading || deleting}
         className="w-full py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {loading ? 'Saving…' : 'Save changes'}
+      </button>
+
+      <button
+        type="button"
+        onClick={handleDelete}
+        disabled={loading || deleting}
+        className="w-full py-2.5 border border-red-200 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        {deleting ? 'Deleting…' : 'Delete listing'}
       </button>
     </form>
   )
