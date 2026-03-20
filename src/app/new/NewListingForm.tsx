@@ -4,11 +4,14 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
+const CATEGORIES = ['Cameras', 'Gaming', 'Audio', 'Sports', 'Electronics', 'Other']
+
 export default function NewListingForm({ userId }: { userId: string }) {
   const router = useRouter()
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [dailyPrice, setDailyPrice] = useState('')
+  const [category, setCategory] = useState('Other')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -52,6 +55,7 @@ export default function NewListingForm({ userId }: { userId: string }) {
           description: description || null,
           daily_price: parseFloat(dailyPrice),
           image_url: imageUrl,
+          category,
         })
         .select('id')
         .single()
@@ -94,6 +98,29 @@ export default function NewListingForm({ userId }: { userId: string }) {
           rows={4}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent resize-none"
         />
+      </div>
+
+      {/* Category */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Category <span className="text-red-500">*</span>
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {CATEGORIES.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setCategory(c)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                category === c
+                  ? 'bg-black text-white'
+                  : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Daily price */}

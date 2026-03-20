@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { createServerClient } from '@/lib/supabase-server'
+import ListingsGrid from './ListingsGrid'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,7 +10,7 @@ export default async function HomePage() {
   const [{ data: listings, error }, { data: { user } }] = await Promise.all([
     supabase
       .from('listings')
-      .select('id, title, daily_price, image_url, is_available')
+      .select('id, title, daily_price, image_url, is_available, category')
       .order('is_available', { ascending: false })
       .order('id', { ascending: false }),
     supabase.auth.getUser(),
@@ -18,7 +18,6 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">
@@ -50,59 +49,12 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* Main */}
       <main className="max-w-6xl mx-auto px-4 py-10">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-8">Available Items</h1>
-
-        {error && (
+        {error ? (
           <p className="text-red-500 text-sm">Failed to load listings. Please try again later.</p>
+        ) : (
+          <ListingsGrid listings={listings ?? []} />
         )}
-
-        {!error && listings?.length === 0 && (
-          <p className="text-gray-500 text-sm">No items available right now. Be the first to post!</p>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {listings?.map((listing) => (
-            <Link
-              key={listing.id}
-              href={`/listings/${listing.id}`}
-              className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
-            >
-              <div className="relative aspect-[4/3] bg-gray-100">
-                {listing.image_url ? (
-                  <Image
-                    src={listing.image_url}
-                    alt={listing.title}
-                    fill
-                    className={`object-cover transition-transform duration-300 ${listing.is_available ? 'group-hover:scale-105' : 'opacity-50'}`}
-                    sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                )}
-                {!listing.is_available && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="bg-black/70 text-white text-xs font-medium px-2.5 py-1 rounded-full">
-                      Rented out
-                    </span>
-                  </div>
-                )}
-              </div>
-              <div className="p-4">
-                <h2 className="text-sm font-medium text-gray-900 truncate">{listing.title}</h2>
-                <p className="mt-1 text-sm text-gray-500">
-                  <span className="font-semibold text-gray-900">${listing.daily_price}</span>
-                  {' '}/day
-                </p>
-              </div>
-            </Link>
-          ))}
-        </div>
       </main>
     </div>
   )

@@ -14,7 +14,7 @@ export default async function EditListingPage({ params }: { params: Promise<{ id
 
   const { data: listing, error } = await supabase
     .from('listings')
-    .select('id, title, description, daily_price, image_url, owner_id')
+    .select('id, title, description, daily_price, image_url, owner_id, category')
     .eq('id', id)
     .single()
 

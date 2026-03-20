@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase'
 
+const CATEGORIES = ['Cameras', 'Gaming', 'Audio', 'Sports', 'Electronics', 'Other']
+
 type Listing = {
   id: string
   title: string
@@ -12,6 +14,7 @@ type Listing = {
   daily_price: number
   image_url: string | null
   owner_id: string
+  category: string
 }
 
 export default function EditListingForm({ listing }: { listing: Listing }) {
@@ -19,6 +22,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
   const [title, setTitle] = useState(listing.title)
   const [description, setDescription] = useState(listing.description ?? '')
   const [dailyPrice, setDailyPrice] = useState(String(listing.daily_price))
+  const [category, setCategory] = useState(listing.category ?? 'Other')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -87,6 +91,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
           description: description || null,
           daily_price: parseFloat(dailyPrice),
           image_url: imageUrl,
+          category,
         })
         .eq('id', listing.id)
         .select('id')
@@ -128,6 +133,28 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
           rows={4}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent resize-none"
         />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Category <span className="text-red-500">*</span>
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {CATEGORIES.map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setCategory(c)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                category === c
+                  ? 'bg-black text-white'
+                  : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div>
