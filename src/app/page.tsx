@@ -2,13 +2,19 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { createServerClient } from '@/lib/supabase-server'
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   const supabase = await createServerClient()
-  const { data: listings, error } = await supabase
-    .from('listings')
-    .select('id, title, daily_price, image_url')
-    .eq('is_available', true)
-    .order('id', { ascending: false })
+
+  const [{ data: listings, error }, { data: { user } }] = await Promise.all([
+    supabase
+      .from('listings')
+      .select('id, title, daily_price, image_url')
+      .eq('is_available', true)
+      .order('id', { ascending: false }),
+    supabase.auth.getUser(),
+  ])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,12 +31,21 @@ export default async function HomePage() {
             >
               Post your item
             </Link>
-            <Link
-              href="/login"
-              className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Login
-            </Link>
+            {user ? (
+              <Link
+                href="/profile"
+                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                My profile
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Login
+              </Link>
+            )}
           </nav>
         </div>
       </header>
