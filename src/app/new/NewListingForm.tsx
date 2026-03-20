@@ -34,12 +34,12 @@ export default function NewListingForm({ userId }: { userId: string }) {
         const ext = imageFile.name.split('.').pop()
         const filename = `${userId}/${Date.now()}.${ext}`
         const { error: uploadError } = await supabase.storage
-          .from('listing-images')
+          .from('listing-image')
           .upload(filename, imageFile)
         if (uploadError) throw new Error(`Image upload failed: ${uploadError.message}`)
 
         const { data: { publicUrl } } = supabase.storage
-          .from('listing-images')
+          .from('listing-image')
           .getPublicUrl(filename)
         imageUrl = publicUrl
       }

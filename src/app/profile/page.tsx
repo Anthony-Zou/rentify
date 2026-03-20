@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { createServerClient, createAdminClient } from '@/lib/supabase-server'
+import { createServerClient } from '@/lib/supabase-server'
 import ProfileForm from './ProfileForm'
 import MyListings from './MyListings'
 import LogoutButton from './LogoutButton'
@@ -15,15 +15,13 @@ export default async function ProfilePage() {
     redirect('/login?next=/profile')
   }
 
-  const admin = createAdminClient()
-
   const [profileResult, listingsResult] = await Promise.all([
-    admin
+    supabase
       .from('profiles')
       .select('full_name, telegram_handle, university_name')
       .eq('id', user.id)
       .single(),
-    admin
+    supabase
       .from('listings')
       .select('id, title, daily_price, image_url, is_available, created_at')
       .eq('owner_id', user.id)
@@ -49,7 +47,6 @@ export default async function ProfilePage() {
           ← Back to listings
         </Link>
 
-        {/* Profile form */}
         <section>
           <h1 className="text-2xl font-semibold text-gray-900 mb-6">My profile</h1>
           <ProfileForm
@@ -60,7 +57,6 @@ export default async function ProfilePage() {
           />
         </section>
 
-        {/* My listings */}
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-6">My listings</h2>
           <MyListings listings={listings} />
