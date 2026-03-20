@@ -2,13 +2,14 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { createServerClient, createAdminClient } from '@/lib/supabase-server'
+import OwnerControls from './OwnerControls'
 
 export const dynamic = 'force-dynamic'
 
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
 
-  const [supabase, admin] = [await createServerClient(), createAdminClient()]
+  const supabase = await createServerClient()
 
   const [listingResult, userResult] = await Promise.all([
     supabase
@@ -23,13 +24,20 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
 
   const listing = listingResult.data
   const user = userResult.data.user
+  const isOwner = user?.id === listing.owner_id
 
-  // Admin client reads owner profile, bypassing profiles RLS
-  const { data: owner } = await admin
-    .from('profiles')
-    .select('full_name, telegram_handle, university_name')
-    .eq('id', listing.owner_id)
-    .single()
+  let owner: { full_name: string | null; telegram_handle: string | null; university_name: string | null } | null = null
+  try {
+    const admin = createAdminClient()
+    const { data } = await admin
+      .from('profiles')
+      .select('full_name, telegram_handle, university_name')
+      .eq('id', listing.owner_id)
+      .single()
+    owner = data
+  } catch {
+    // Admin key not configured — owner info unavailable
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -63,6 +71,14 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           ← All listings
         </Link>
 
+        {/* Owner controls — only visible to the listing owner */}
+        {isOwner && (
+          <OwnerControls
+            listingId={listing.id}
+            isAvailable={listing.is_available}
+          />
+        )}
+
         {listing.image_url && (
           <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden mb-6">
             <Image
@@ -82,7 +98,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               <h1 className="text-2xl font-semibold text-gray-900">{listing.title}</h1>
               {!listing.is_available && (
                 <span className="mt-1 inline-block text-xs font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
-                  Currently unavailable
+                  Currently rented out
                 </span>
               )}
             </div>
@@ -113,7 +129,9 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           <div>
             <h2 className="text-sm font-semibold text-gray-900 mb-3">Contact owner</h2>
 
-            {user ? (
+            {isOwner ? (
+              <p className="text-sm text-gray-400">This is your listing.</p>
+            ) : user ? (
               owner?.telegram_handle ? (
                 <a
                   href={`https://t.me/${owner.telegram_handle.replace(/^@/, '')}`}
@@ -127,7 +145,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                   Message on Telegram (@{owner.telegram_handle.replace(/^@/, '')})
                 </a>
               ) : (
-                <p className="text-sm text-gray-500">房东暂未填写联系方式。</p>
+                <p className="text-sm text-gray-500">Owner has not added contact info yet.</p>
               )
             ) : (
               <Link

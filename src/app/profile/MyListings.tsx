@@ -39,6 +39,14 @@ export default function MyListings({ listings: initial }: { listings: Listing[] 
     if (!confirm('Delete this listing? This cannot be undone.')) return
     setDeleting(id)
     const supabase = createClient()
+
+    // Delete image from storage first
+    const listing = listings.find((l) => l.id === id)
+    if (listing?.image_url) {
+      const oldPath = listing.image_url.split('/object/public/listing-image/')[1]
+      if (oldPath) await supabase.storage.from('listing-image').remove([decodeURIComponent(oldPath)])
+    }
+
     const { error } = await supabase.from('listings').delete().eq('id', id)
     if (!error) {
       setListings((prev) => prev.filter((l) => l.id !== id))
