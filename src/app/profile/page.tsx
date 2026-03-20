@@ -49,7 +49,7 @@ export default async function ProfilePage() {
       .eq('owner_id', user.id)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
-    incomingRequests = (data ?? []) as typeof incomingRequests
+    incomingRequests = (data ?? []) as unknown as typeof incomingRequests
   } catch {
     // Admin key not configured
   }
