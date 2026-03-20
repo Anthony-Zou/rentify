@@ -3,8 +3,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { createServerClient, createAdminClient } from '@/lib/supabase-server'
 import OwnerControls from './OwnerControls'
+import ShareButtons from './ShareButtons'
 
 export const dynamic = 'force-dynamic'
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rentify-ochre.vercel.app'
 
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -156,6 +159,12 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               </Link>
             )}
           </div>
+
+          <ShareButtons
+            title={listing.title}
+            dailyPrice={listing.daily_price}
+            listingUrl={`${SITE_URL}/listings/${listing.id}`}
+          />
         </div>
       </main>
     </div>
