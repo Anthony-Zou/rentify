@@ -14,8 +14,8 @@ export default function LoginPage() {
     e.preventDefault()
     setError(null)
 
-    if (!email.endsWith('.edu.sg')) {
-      setError('Only .edu.sg university email addresses are allowed.')
+    if (!email.endsWith('.edu.sg') && !email.endsWith('.edu')) {
+      setError('Only university email addresses are allowed (e.g. .edu.sg or .edu).')
       return
     }
 
@@ -68,7 +68,7 @@ export default function LoginPage() {
         </Link>
         <h1 className="text-xl font-semibold text-gray-900 mb-1">Sign in</h1>
         <p className="text-sm text-gray-500 mb-6">
-          NUS / NTU students only — use your <span className="font-medium">.edu.sg</span> email.
+          NUS / NTU students only — use your university email (.edu.sg or .edu).
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -79,7 +79,7 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
-              placeholder="e.g. john@u.nus.edu.sg"
+              placeholder="e.g. e1234567@u.nus.edu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
