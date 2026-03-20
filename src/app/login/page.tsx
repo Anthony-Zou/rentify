@@ -104,22 +104,21 @@ export default function LoginPage() {
           <>
             <h1 className="text-xl font-semibold text-gray-900 mb-1">Check your inbox</h1>
             <p className="text-sm text-gray-500 mb-6">
-              We sent a 6-digit code to{' '}
+              We sent a code to{' '}
               <span className="font-medium text-gray-700">{email}</span>.
             </p>
 
             <form onSubmit={handleVerifyCode} className="space-y-4">
               <div>
                 <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-1">
-                  6-digit code
+                  Login code
                 </label>
                 <input
                   id="code"
                   type="text"
                   inputMode="numeric"
-                  pattern="[0-9]{6}"
-                  maxLength={6}
-                  placeholder="123456"
+                  maxLength={8}
+                  placeholder="enter code"
                   value={code}
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
                   required
@@ -132,7 +131,7 @@ export default function LoginPage() {
 
               <button
                 type="submit"
-                disabled={loading || code.length !== 6}
+                disabled={loading || code.length < 6}
                 className="w-full py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {loading ? 'Verifying…' : 'Sign in'}
