@@ -14,6 +14,9 @@ export async function GET(request: NextRequest) {
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!,
       {
+        auth: {
+          flowType: 'pkce',
+        },
         cookies: {
           getAll() {
             return cookieStore.getAll()
@@ -31,7 +34,14 @@ export async function GET(request: NextRequest) {
     if (!error) {
       return NextResponse.redirect(`${origin}${next}`)
     }
+
+    console.error('[auth/callback] exchangeCodeForSession failed:', error.message)
+    return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(error.message)}`)
   }
 
-  return NextResponse.redirect(`${origin}/login?error=auth_failed`)
+  // No code — Supabase may have sent an error in the URL
+  const errorDesc = searchParams.get('error_description')
+  return NextResponse.redirect(
+    `${origin}/login?error=${encodeURIComponent(errorDesc ?? 'No code received')}`
+  )
 }
