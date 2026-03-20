@@ -1,9 +1,10 @@
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { createServerClient } from '@/lib/supabase-server'
+import { createServerClient, createAdminClient } from '@/lib/supabase-server'
 import ProfileForm from './ProfileForm'
 import MyListings from './MyListings'
 import LogoutButton from './LogoutButton'
+import RequestActions from './RequestActions'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,6 +31,28 @@ export default async function ProfilePage() {
 
   const profile = profileResult.data
   const listings = listingsResult.data ?? []
+
+  let incomingRequests: {
+    id: string
+    start_date: string
+    end_date: string
+    message: string | null
+    created_at: string
+    listing: { title: string; image_url: string | null } | null
+    renter: { full_name: string | null; telegram_handle: string | null } | null
+  }[] = []
+  try {
+    const admin = createAdminClient()
+    const { data } = await admin
+      .from('rental_requests')
+      .select('id, start_date, end_date, message, created_at, listing:listings(title, image_url), renter:profiles!renter_id(full_name, telegram_handle)')
+      .eq('owner_id', user.id)
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+    incomingRequests = (data ?? []) as typeof incomingRequests
+  } catch {
+    // Admin key not configured
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -60,6 +83,11 @@ export default async function ProfilePage() {
         <section>
           <h2 className="text-xl font-semibold text-gray-900 mb-6">My listings</h2>
           <MyListings listings={listings} />
+        </section>
+
+        <section>
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Incoming requests</h2>
+          <RequestActions requests={incomingRequests} />
         </section>
       </main>
     </div>

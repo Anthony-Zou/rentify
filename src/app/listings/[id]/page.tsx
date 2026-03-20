@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { createServerClient, createAdminClient } from '@/lib/supabase-server'
 import OwnerControls from './OwnerControls'
 import ShareButtons from './ShareButtons'
+import RequestForm from './RequestForm'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,6 +41,19 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
     owner = data
   } catch {
     // Admin key not configured — owner info unavailable
+  }
+
+  let existingRequest: { id: string; status: string } | null = null
+  if (user && !isOwner) {
+    const { data } = await supabase
+      .from('rental_requests')
+      .select('id, status')
+      .eq('listing_id', id)
+      .eq('renter_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    existingRequest = data
   }
 
   return (
@@ -130,11 +144,18 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           <hr className="border-gray-100 mb-6" />
 
           <div>
-            <h2 className="text-sm font-semibold text-gray-900 mb-3">Contact owner</h2>
+            <h2 className="text-sm font-semibold text-gray-900 mb-3">Request to rent</h2>
 
             {isOwner ? (
               <p className="text-sm text-gray-400">This is your listing.</p>
-            ) : user ? (
+            ) : !user ? (
+              <Link
+                href={`/login?next=/listings/${listing.id}`}
+                className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+              >
+                Login to request rental
+              </Link>
+            ) : existingRequest?.status === 'accepted' ? (
               owner?.telegram_handle ? (
                 <a
                   href={`https://t.me/${owner.telegram_handle.replace(/^@/, '')}`}
@@ -145,18 +166,26 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z" />
                   </svg>
-                  Message on Telegram (@{owner.telegram_handle.replace(/^@/, '')})
+                  Owner accepted! Contact @{owner.telegram_handle.replace(/^@/, '')}
                 </a>
               ) : (
-                <p className="text-sm text-gray-500">Owner has not added contact info yet.</p>
+                <p className="text-sm text-green-700 bg-green-50 px-4 py-3 rounded-lg">
+                  Owner accepted your request! Ask them to add a Telegram handle to their profile.
+                </p>
               )
+            ) : existingRequest?.status === 'pending' ? (
+              <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-4 py-3 rounded-lg">
+                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Request sent — waiting for owner to respond
+              </div>
             ) : (
-              <Link
-                href={`/login?next=/listings/${listing.id}`}
-                className="inline-flex items-center gap-2 px-4 py-2.5 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Login to see contact info
-              </Link>
+              <RequestForm
+                listingId={listing.id}
+                ownerId={listing.owner_id}
+                renterId={user.id}
+              />
             )}
           </div>
 

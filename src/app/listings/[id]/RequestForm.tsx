@@ -1,0 +1,114 @@
+'use client'
+
+import { useState } from 'react'
+import { createClient } from '@/lib/supabase'
+
+export default function RequestForm({
+  listingId,
+  ownerId,
+  renterId,
+}: {
+  listingId: string
+  ownerId: string
+  renterId: string
+}) {
+  const today = new Date().toISOString().split('T')[0]
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
+  const [message, setMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [submitted, setSubmitted] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault()
+    setError(null)
+
+    if (endDate < startDate) {
+      setError('End date must be on or after start date.')
+      return
+    }
+
+    setLoading(true)
+    const supabase = createClient()
+    const { error: insertError } = await supabase.from('rental_requests').insert({
+      listing_id: listingId,
+      renter_id: renterId,
+      owner_id: ownerId,
+      start_date: startDate,
+      end_date: endDate,
+      message: message || null,
+    })
+
+    if (insertError) {
+      setError(insertError.message)
+      setLoading(false)
+      return
+    }
+
+    setSubmitted(true)
+  }
+
+  if (submitted) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-4 py-3 rounded-lg">
+        <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+        </svg>
+        Request sent — waiting for owner to respond
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1">Start date</label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            min={today}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-gray-600 mb-1">End date</label>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            min={startDate || today}
+            required
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label className="block text-xs font-medium text-gray-600 mb-1">
+          Message to owner <span className="text-gray-400 font-normal">(optional)</span>
+        </label>
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Hi, I'd like to rent this for…"
+          rows={3}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent resize-none"
+        />
+      </div>
+
+      {error && <p className="text-sm text-red-500">{error}</p>}
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        {loading ? 'Sending…' : 'Request to Rent →'}
+      </button>
+    </form>
+  )
+}
