@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { createServerClient, createAdminClient } from '@/lib/supabase-server'
 import ProfileForm from './ProfileForm'
 import MyListings from './MyListings'
+import LogoutButton from './LogoutButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,6 +40,7 @@ export default async function ProfilePage() {
           <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">
             Rentify
           </Link>
+          <LogoutButton />
         </div>
       </header>
 

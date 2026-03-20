@@ -17,6 +17,7 @@ type Listing = {
 export default function MyListings({ listings: initial }: { listings: Listing[] }) {
   const [listings, setListings] = useState(initial)
   const [toggling, setToggling] = useState<string | null>(null)
+  const [deleting, setDeleting] = useState<string | null>(null)
 
   async function toggleAvailability(id: string, current: boolean) {
     setToggling(id)
@@ -32,6 +33,17 @@ export default function MyListings({ listings: initial }: { listings: Listing[] 
       )
     }
     setToggling(null)
+  }
+
+  async function deleteListing(id: string) {
+    if (!confirm('Delete this listing? This cannot be undone.')) return
+    setDeleting(id)
+    const supabase = createClient()
+    const { error } = await supabase.from('listings').delete().eq('id', id)
+    if (!error) {
+      setListings((prev) => prev.filter((l) => l.id !== id))
+    }
+    setDeleting(null)
   }
 
   if (listings.length === 0) {
@@ -85,18 +97,35 @@ export default function MyListings({ listings: initial }: { listings: Listing[] 
             <p className="text-sm text-gray-500">${listing.daily_price}/day</p>
           </div>
 
-          {/* Available toggle */}
-          <button
-            onClick={() => toggleAvailability(listing.id, listing.is_available)}
-            disabled={toggling === listing.id}
-            className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium transition-colors disabled:opacity-50 ${
-              listing.is_available
-                ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-            }`}
-          >
-            {toggling === listing.id ? '…' : listing.is_available ? 'Available' : 'Unavailable'}
-          </button>
+          {/* Actions */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => toggleAvailability(listing.id, listing.is_available)}
+              disabled={toggling === listing.id || deleting === listing.id}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors disabled:opacity-50 ${
+                listing.is_available
+                  ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              }`}
+            >
+              {toggling === listing.id ? '…' : listing.is_available ? 'Available' : 'Unavailable'}
+            </button>
+
+            <button
+              onClick={() => deleteListing(listing.id)}
+              disabled={deleting === listing.id || toggling === listing.id}
+              className="p-1.5 text-gray-400 hover:text-red-500 disabled:opacity-50 transition-colors"
+              title="Delete listing"
+            >
+              {deleting === listing.id ? (
+                <span className="text-xs">…</span>
+              ) : (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
       ))}
     </div>
