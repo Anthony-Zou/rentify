@@ -1,5 +1,4 @@
 import { createServerClient as createSupabaseServerClient } from '@supabase/ssr'
-import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
@@ -21,26 +20,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const admin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      { auth: { autoRefreshToken: false, persistSession: false } }
-    )
-
-    // Generate OTP without sending email — returns email_otp in properties
-    const { data: linkData, error: linkError } = await admin.auth.admin.generateLink({
-      type: 'email',
-      email,
-    })
-
-    if (linkError || !linkData?.properties?.email_otp) {
-      console.error('[e2e/login] generateLink failed:', linkError?.message)
-      return new Response(`generateLink failed: ${linkError?.message}`, { status: 500 })
+    const password = process.env.E2E_TEST_PASSWORD
+    if (!password) {
+      return new Response('E2E_TEST_PASSWORD not set', { status: 500 })
     }
 
-    const otp = linkData.properties.email_otp
-
-    // Verify OTP using the SSR client so it writes session cookies to the response
+    // Sign in with password using the SSR client so it writes session cookies to the response
     const cookieStore = await cookies()
     const supabase = createSupabaseServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -57,15 +42,11 @@ export async function GET(request: NextRequest) {
       }
     )
 
-    const { error: verifyError } = await supabase.auth.verifyOtp({
-      email,
-      token: otp,
-      type: 'email',
-    })
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
-    if (verifyError) {
-      console.error('[e2e/login] verifyOtp failed:', verifyError.message)
-      return new Response(`verifyOtp failed: ${verifyError.message}`, { status: 500 })
+    if (signInError) {
+      console.error('[e2e/login] signInWithPassword failed:', signInError.message)
+      return new Response(`signIn failed: ${signInError.message}`, { status: 500 })
     }
 
     return NextResponse.redirect(`${origin}${next}`)

@@ -16,10 +16,13 @@ export default async function globalSetup() {
     { auth: { autoRefreshToken: false, persistSession: false } }
   )
 
-  // Create or retrieve test users (admin.createUser fails if exists, that's fine)
+  const password = process.env.E2E_TEST_PASSWORD
+  if (!password) throw new Error('E2E_TEST_PASSWORD must be set in .env.local')
+
+  // Create or retrieve test users (createUser fails silently if email already exists)
   const [ownerResult, renterResult] = await Promise.all([
-    admin.auth.admin.createUser({ email: OWNER_EMAIL, email_confirm: true }),
-    admin.auth.admin.createUser({ email: RENTER_EMAIL, email_confirm: true }),
+    admin.auth.admin.createUser({ email: OWNER_EMAIL, password, email_confirm: true }),
+    admin.auth.admin.createUser({ email: RENTER_EMAIL, password, email_confirm: true }),
   ])
 
   // Get user IDs (createUser returns the user even if it already exists via error.message check)
@@ -28,6 +31,12 @@ export default async function globalSetup() {
   const renterId = renterResult.data?.user?.id ?? (await getUserIdByEmail(admin, RENTER_EMAIL))
 
   if (!ownerId || !renterId) throw new Error('Failed to create/find test users')
+
+  // Ensure password is set (in case users already existed without one)
+  await Promise.all([
+    admin.auth.admin.updateUserById(ownerId, { password }),
+    admin.auth.admin.updateUserById(renterId, { password }),
+  ])
 
   // Upsert owner profile with telegram handle so contact info works after acceptance
   await admin.from('profiles').upsert({
