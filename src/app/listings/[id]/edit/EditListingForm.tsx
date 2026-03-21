@@ -39,9 +39,14 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
       if (oldPath) await supabase.storage.from('listing-image').remove([decodeURIComponent(oldPath)])
     }
 
-    const { error: deleteError } = await supabase.from('listings').delete().eq('id', listing.id)
+    const { data: deleted, error: deleteError } = await supabase.from('listings').delete().eq('id', listing.id).select('id')
     if (deleteError) {
       setError(deleteError.message)
+      setDeleting(false)
+      return
+    }
+    if (!deleted || deleted.length === 0) {
+      setError('Delete failed — you may not have permission. Check Supabase RLS policies.')
       setDeleting(false)
       return
     }

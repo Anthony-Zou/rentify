@@ -47,9 +47,11 @@ export default function MyListings({ listings: initial }: { listings: Listing[] 
       if (oldPath) await supabase.storage.from('listing-image').remove([decodeURIComponent(oldPath)])
     }
 
-    const { error } = await supabase.from('listings').delete().eq('id', id)
-    if (!error) {
+    const { data: deleted, error } = await supabase.from('listings').delete().eq('id', id).select('id')
+    if (!error && deleted && deleted.length > 0) {
       setListings((prev) => prev.filter((l) => l.id !== id))
+    } else if (!error) {
+      alert('Delete failed — you may not have permission. Check Supabase RLS policies.')
     }
     setDeleting(null)
   }
