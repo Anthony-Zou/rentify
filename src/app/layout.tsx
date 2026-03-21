@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rentify — Rent anything on campus",
+  title: "Borlo — Rent anything on campus",
   description: "P2P rental marketplace for NUS and NTU students. Rent cameras, consoles, drones and more from fellow students.",
 };
 

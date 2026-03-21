@@ -13,7 +13,7 @@ export default function ShareButtons({
 }) {
   const [copied, setCopied] = useState(false)
 
-  const text = `${title} — rent $${dailyPrice}/day on Rentify`
+  const text = `${title} — rent $${dailyPrice}/day on Borlo`
   const telegramUrl = `https://t.me/share/url?url=${encodeURIComponent(listingUrl)}&text=${encodeURIComponent(text)}`
   const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${text} 👉 ${listingUrl}`)}`
 

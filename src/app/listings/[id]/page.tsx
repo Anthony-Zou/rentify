@@ -6,10 +6,11 @@ import OwnerControls from './OwnerControls'
 import ShareButtons from './ShareButtons'
 import RequestForm from './RequestForm'
 import AvailabilityCalendar from './AvailabilityCalendar'
+import NavProfileLink from '@/components/NavProfileLink'
 
 export const dynamic = 'force-dynamic'
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://rentify-ochre.vercel.app'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://borlo.app'
 
 export default async function ListingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -63,16 +64,11 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">
-            Rentify
+            Borlo
           </Link>
           <nav className="flex items-center gap-3">
             {user ? (
-              <Link
-                href="/profile"
-                className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                My profile
-              </Link>
+              <NavProfileLink userId={user.id} />
             ) : (
               <Link
                 href="/login"

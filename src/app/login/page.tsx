@@ -63,7 +63,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
       <div className="bg-white rounded-xl border border-gray-200 p-8 max-w-sm w-full">
         <Link href="/" className="text-sm text-gray-500 hover:text-gray-800 mb-6 inline-block">
-          ← Rentify
+          ← Borlo
         </Link>
 
         {step === 'email' ? (

@@ -32,6 +32,12 @@ export default async function ProfilePage() {
   const profile = profileResult.data
   const listings = listingsResult.data ?? []
 
+  const { data: myRequests } = await supabase
+    .from('rental_requests')
+    .select('id, listing_id, start_date, end_date, status, listing:listings(title)')
+    .eq('renter_id', user.id)
+    .order('created_at', { ascending: false })
+
   let incomingRequests: {
     id: string
     start_date: string
@@ -59,7 +65,7 @@ export default async function ProfilePage() {
       <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">
-            Rentify
+            Borlo
           </Link>
           <LogoutButton />
         </div>
@@ -89,6 +95,37 @@ export default async function ProfilePage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-6">Incoming requests</h2>
           <RequestActions requests={incomingRequests} />
         </section>
+
+        {myRequests && myRequests.length > 0 && (
+          <section>
+            <h2 className="text-xl font-semibold text-gray-900 mb-6">My rental requests</h2>
+            <div className="space-y-2">
+              {myRequests.map((req) => {
+                const statusStyles: Record<string, string> = {
+                  pending: 'bg-amber-50 text-amber-700',
+                  accepted: 'bg-green-50 text-green-700',
+                  declined: 'bg-gray-100 text-gray-500',
+                }
+                const listing = req.listing as { title: string } | null
+                return (
+                  <a
+                    key={req.id}
+                    href={`/listings/${req.listing_id}`}
+                    className="flex items-center justify-between bg-white rounded-xl border border-gray-200 px-4 py-3 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">{listing?.title ?? 'Listing'}</p>
+                      <p className="text-xs text-gray-500 mt-0.5">{req.start_date} → {req.end_date}</p>
+                    </div>
+                    <span className={`ml-4 shrink-0 text-xs font-medium px-2.5 py-1 rounded-full capitalize ${statusStyles[req.status] ?? 'bg-gray-100 text-gray-500'}`}>
+                      {req.status}
+                    </span>
+                  </a>
+                )
+              })}
+            </div>
+          </section>
+        )}
       </main>
     </div>
   )
