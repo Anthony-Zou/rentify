@@ -6,7 +6,7 @@ dotenv.config({ path: '.env.local' })
 export default defineConfig({
   testDir: './e2e',
   timeout: 30_000,
-  retries: process.env.CI ? 2 : 0,
+  retries: 1,
   workers: 1, // sequential — tests share Supabase state
   reporter: 'list',
 

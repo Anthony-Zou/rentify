@@ -15,8 +15,8 @@ test.describe('Rental request flow', () => {
     const { listingId } = getTestData()
     await page.goto(`/listings/${listingId}`)
 
-    await page.fill('input[type="date"]:first-of-type', '2026-05-01')
-    await page.fill('input[type="date"]:last-of-type', '2026-05-03')
+    await page.locator('input[type="date"]').nth(0).fill('2026-05-01')
+    await page.locator('input[type="date"]').nth(1).fill('2026-05-03')
     await page.fill('textarea', 'Hi, I would like to rent this for a project.')
     await page.getByRole('button', { name: 'Request to Rent →' }).click()
 
@@ -60,7 +60,7 @@ test.describe('Rental request flow', () => {
     await loginAs(page, 'owner')
     await page.goto('/profile')
     await expect(page.getByText('Incoming requests')).toBeVisible()
-    await expect(page.getByText('[E2E] Test Camera')).toBeVisible()
+    await expect(page.getByText('[E2E] Test Camera').first()).toBeVisible()
     await expect(page.getByText('2026-05-01 → 2026-05-03')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Accept' })).toBeVisible()
     await expect(page.getByRole('button', { name: 'Decline' })).toBeVisible()

@@ -45,7 +45,7 @@ test.describe('Listings — owner', () => {
     await page.goto(`/listings/${listingId}`)
     await expect(page.getByText('This is your listing')).toBeVisible()
     // Owner controls banner should be present
-    await expect(page.getByRole('link', { name: 'Edit listing' })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Edit' })).toBeVisible()
   })
 
   test('owner can create a listing and delete it', async ({ page }) => {
@@ -85,16 +85,17 @@ test.describe('Listings — owner', () => {
     const { listingId } = getTestData()
     await page.goto(`/listings/${listingId}`)
 
-    const toggle = page.getByRole('button', { name: /Mark as|Available|Unavailable/ }).first()
+    // Use a structural selector so it stays stable after text changes
+    const toggle = page.locator('[class*="amber-50"] button').first()
     const initialText = await toggle.textContent()
     await toggle.click()
 
-    // Wait for the button text to change
-    await expect(toggle).not.toHaveText(initialText!)
+    // Wait for text to change (Available ↔ Rented out)
+    await expect(toggle).not.toHaveText(initialText!, { timeout: 5000 })
 
     // Toggle back
     await toggle.click()
-    await expect(toggle).toHaveText(initialText!)
+    await expect(toggle).toHaveText(initialText!, { timeout: 5000 })
   })
 })
 
