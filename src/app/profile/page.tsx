@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { createServerClient, createAdminClient } from '@/lib/supabase-server'
 import ProfileForm from './ProfileForm'
 import MyListings from './MyListings'
-import LogoutButton from './LogoutButton'
 import RequestActions from './RequestActions'
+import Header from '@/components/Header'
 
 export const dynamic = 'force-dynamic'
 
@@ -62,14 +62,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-10">
-        <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="text-xl font-bold text-gray-900 tracking-tight">
-            Borlo
-          </Link>
-          <LogoutButton />
-        </div>
-      </header>
+      <Header user={user} showLogout />
 
       <main className="max-w-2xl mx-auto px-4 py-10 space-y-10">
         <Link href="/" className="text-sm text-gray-500 hover:text-gray-800 inline-block">
