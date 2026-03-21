@@ -5,6 +5,7 @@ import { createServerClient, createAdminClient } from '@/lib/supabase-server'
 import OwnerControls from './OwnerControls'
 import ShareButtons from './ShareButtons'
 import RequestForm from './RequestForm'
+import AvailabilityCalendar from './AvailabilityCalendar'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,14 +32,15 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
   const isOwner = user?.id === listing.owner_id
 
   let owner: { full_name: string | null; telegram_handle: string | null; university_name: string | null } | null = null
+  let blockedRanges: { start_date: string; end_date: string }[] = []
   try {
     const admin = createAdminClient()
-    const { data } = await admin
-      .from('profiles')
-      .select('full_name, telegram_handle, university_name')
-      .eq('id', listing.owner_id)
-      .single()
-    owner = data
+    const [ownerResult, blockedResult] = await Promise.all([
+      admin.from('profiles').select('full_name, telegram_handle, university_name').eq('id', listing.owner_id).single(),
+      admin.from('rental_requests').select('start_date, end_date').eq('listing_id', id).eq('status', 'accepted'),
+    ])
+    owner = ownerResult.data
+    blockedRanges = blockedResult.data ?? []
   } catch {
     // Admin key not configured — owner info unavailable
   }
@@ -140,6 +142,13 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
               )}
             </p>
           )}
+
+          <hr className="border-gray-100 mb-6" />
+
+          <div className="mb-6">
+            <h2 className="text-sm font-semibold text-gray-900 mb-3">Availability</h2>
+            <AvailabilityCalendar blockedRanges={blockedRanges} />
+          </div>
 
           <hr className="border-gray-100 mb-6" />
 
