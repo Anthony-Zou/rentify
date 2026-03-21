@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { loginAs } from './helpers/auth'
-import { getTestData, getAdminClient } from './helpers/data'
+import { getTestData } from './helpers/data'
 
 test.describe('Listings — public', () => {
   test('homepage shows the test listing', async ({ page }) => {
@@ -61,6 +61,7 @@ test.describe('Listings — owner', () => {
     // Delete it via edit page
     const listingUrl = page.url()
     await page.goto(listingUrl + '/edit')
+    await page.waitForLoadState('networkidle')
     page.on('dialog', (dialog) => dialog.accept())
     await page.getByRole('button', { name: 'Delete listing' }).click()
     await page.waitForURL('/profile')
@@ -69,6 +70,7 @@ test.describe('Listings — owner', () => {
   test('owner can edit a listing', async ({ page }) => {
     const { listingId } = getTestData()
     await page.goto(`/listings/${listingId}/edit`)
+    await page.waitForLoadState('networkidle')
     await page.fill('input[type="text"]', '[E2E] Test Camera Edited')
     await page.getByRole('button', { name: 'Save changes' }).click()
     await page.waitForURL(`/listings/${listingId}`)
