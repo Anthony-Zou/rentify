@@ -17,15 +17,26 @@ type RentalRequest = {
 export default function RequestActions({ requests: initial }: { requests: RentalRequest[] }) {
   const [requests, setRequests] = useState(initial)
   const [processing, setProcessing] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleAccept(id: string) {
     setProcessing(id)
+    setError(null)
     const supabase = createClient()
-    const { error } = await supabase
-      .from('rental_requests')
-      .update({ status: 'accepted' })
-      .eq('id', id)
-    if (!error) setRequests((prev) => prev.filter((r) => r.id !== id))
+    const { error: rpcError } = await supabase.rpc('accept_rental_request', { request_id: id })
+    if (!rpcError) {
+      const accepted = requests.find((r) => r.id === id)
+      setRequests((prev) =>
+        prev.filter((r) => {
+          if (r.id === id) return false
+          if (!accepted) return true
+          // Remove auto-declined overlapping requests too
+          return !(r.start_date <= accepted.end_date && r.end_date >= accepted.start_date)
+        })
+      )
+    } else {
+      setError('Failed to accept request. Please try again.')
+    }
     setProcessing(null)
   }
 
@@ -50,6 +61,7 @@ export default function RequestActions({ requests: initial }: { requests: Rental
 
   return (
     <div className="space-y-3">
+      {error && <p className="text-sm text-red-500 px-1">{error}</p>}
       {requests.map((req) => {
         const renterName = req.renter?.full_name ?? req.renter?.telegram_handle ?? 'Someone'
         const isProcessing = processing === req.id

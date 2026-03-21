@@ -84,6 +84,93 @@ test.describe('Rental request flow', () => {
     await expect(page.getByText('No pending requests.')).toBeVisible()
   })
 
+  test('overlap check blocks submission for already-booked dates', async ({ page }) => {
+    const { listingId, ownerId } = getTestData()
+    const admin = getAdminClient()
+
+    // Insert an accepted booking for June 1–5 (use ownerId as renter so test renter still sees the form)
+    await admin.from('rental_requests').insert({
+      listing_id: listingId,
+      renter_id: ownerId,
+      owner_id: ownerId,
+      start_date: '2026-06-01',
+      end_date: '2026-06-05',
+      status: 'accepted',
+    })
+
+    await loginAs(page, 'renter')
+    await page.goto(`/listings/${listingId}`)
+
+    // Try overlapping dates (June 3–7 overlaps June 1–5)
+    await page.locator('input[type="date"]').nth(0).fill('2026-06-03')
+    await page.locator('input[type="date"]').nth(1).fill('2026-06-07')
+    await page.getByRole('button', { name: 'Request to Rent →' }).click()
+
+    // Frontend guard catches it before even hitting the DB
+    await expect(page.getByText('overlap with an existing booking')).toBeVisible()
+    // Form stays open — button still present
+    await expect(page.getByRole('button', { name: 'Request to Rent →' })).toBeVisible()
+  })
+
+  test('accepting a request auto-declines all overlapping pending requests', async ({ page }) => {
+    const { listingId, ownerId, renterId } = getTestData()
+    const admin = getAdminClient()
+
+    // Two pending requests with overlapping dates:
+    // Request A: renter (Jul 1–5), Request B: ownerId as second renter (Jul 3–7, overlaps A)
+    await admin.from('rental_requests').insert([
+      { listing_id: listingId, renter_id: renterId, owner_id: ownerId, start_date: '2026-07-01', end_date: '2026-07-05', status: 'pending' },
+      { listing_id: listingId, renter_id: ownerId,  owner_id: ownerId, start_date: '2026-07-03', end_date: '2026-07-07', status: 'pending' },
+    ])
+
+    await loginAs(page, 'owner')
+    await page.goto('/profile')
+    await expect(page.getByRole('button', { name: 'Accept' })).toHaveCount(2)
+
+    // Accept whichever comes first
+    await page.getByRole('button', { name: 'Accept' }).first().click()
+
+    // Both requests should be gone from the pending list (one accepted, one auto-declined)
+    await expect(page.getByText('No pending requests.')).toBeVisible()
+
+    // Verify DB state: exactly one accepted, one declined
+    const { data } = await admin
+      .from('rental_requests')
+      .select('status')
+      .eq('listing_id', listingId)
+    const statuses = data!.map((r) => r.status).sort()
+    expect(statuses).toEqual(['accepted', 'declined'])
+  })
+
+  test('declined renter sees message and can re-request different dates', async ({ page }) => {
+    const { listingId, ownerId, renterId } = getTestData()
+    const admin = getAdminClient()
+
+    // Insert a declined request for August dates
+    await admin.from('rental_requests').insert({
+      listing_id: listingId,
+      renter_id: renterId,
+      owner_id: ownerId,
+      start_date: '2026-08-01',
+      end_date: '2026-08-03',
+      status: 'declined',
+    })
+
+    await loginAs(page, 'renter')
+    await page.goto(`/listings/${listingId}`)
+
+    // Declined banner visible
+    await expect(page.getByText('Your previous request was declined')).toBeVisible()
+    // Form is still shown so they can re-request
+    await expect(page.getByRole('button', { name: 'Request to Rent →' })).toBeVisible()
+
+    // Re-request with non-overlapping dates (September)
+    await page.locator('input[type="date"]').nth(0).fill('2026-09-01')
+    await page.locator('input[type="date"]').nth(1).fill('2026-09-03')
+    await page.getByRole('button', { name: 'Request to Rent →' }).click()
+    await expect(page.getByText('Request sent — waiting for owner to respond')).toBeVisible()
+  })
+
   test('full flow: owner accepts → renter sees contact info → calendar blocks dates', async ({ browser }) => {
     const { listingId, ownerId, renterId } = getTestData()
     const admin = getAdminClient()

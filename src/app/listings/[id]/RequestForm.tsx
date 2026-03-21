@@ -3,14 +3,22 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 
+type BlockedRange = { start_date: string; end_date: string }
+
+function findOverlap(start: string, end: string, ranges: BlockedRange[]): BlockedRange | undefined {
+  return ranges.find((r) => start <= r.end_date && end >= r.start_date)
+}
+
 export default function RequestForm({
   listingId,
   ownerId,
   renterId,
+  blockedRanges,
 }: {
   listingId: string
   ownerId: string
   renterId: string
+  blockedRanges: BlockedRange[]
 }) {
   const today = new Date().toISOString().split('T')[0]
   const [startDate, setStartDate] = useState('')
@@ -26,6 +34,12 @@ export default function RequestForm({
 
     if (endDate < startDate) {
       setError('End date must be on or after start date.')
+      return
+    }
+
+    const conflict = findOverlap(startDate, endDate, blockedRanges)
+    if (conflict) {
+      setError(`These dates overlap with an existing booking (${conflict.start_date} → ${conflict.end_date}). Please choose different dates.`)
       return
     }
 

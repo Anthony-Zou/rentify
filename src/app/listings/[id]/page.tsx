@@ -189,11 +189,24 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                 </svg>
                 Request sent — waiting for owner to respond
               </div>
+            ) : existingRequest?.status === 'declined' ? (
+              <>
+                <p className="text-sm text-amber-700 bg-amber-50 px-4 py-3 rounded-lg mb-4">
+                  Your previous request was declined. You can request different dates below.
+                </p>
+                <RequestForm
+                  listingId={listing.id}
+                  ownerId={listing.owner_id}
+                  renterId={user.id}
+                  blockedRanges={blockedRanges}
+                />
+              </>
             ) : (
               <RequestForm
                 listingId={listing.id}
                 ownerId={listing.owner_id}
                 renterId={user.id}
+                blockedRanges={blockedRanges}
               />
             )}
           </div>
