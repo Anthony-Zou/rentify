@@ -106,7 +106,7 @@ export default async function ProfilePage() {
                   accepted: 'bg-green-50 text-green-700',
                   declined: 'bg-gray-100 text-gray-500',
                 }
-                const listing = req.listing as { title: string } | null
+                const listing = req.listing as unknown as { title: string } | null
                 return (
                   <a
                     key={req.id}
