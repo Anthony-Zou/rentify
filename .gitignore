@@ -42,3 +42,5 @@ next-env.d.ts
 e2e/.test-data.json
 playwright-report/
 test-results/
+docs/product.md
+.gitignore
