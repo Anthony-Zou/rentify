@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { createServerClient } from '@/lib/supabase-server'
 import ListingsGrid from './ListingsGrid'
 import Landing from './Landing'
@@ -19,9 +20,36 @@ export default async function HomePage() {
 
   const listingData = listings ?? []
 
+  let profileIncomplete = false
+  if (user) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('telegram_handle')
+      .eq('id', user.id)
+      .single()
+    profileIncomplete = !profile?.telegram_handle
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header user={user} showPostButton />
+
+      {/* Profile incomplete banner */}
+      {user && profileIncomplete && (
+        <div className="bg-amber-50 border-b border-amber-200">
+          <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <p className="text-sm text-amber-800">
+              <span className="font-semibold">Profile incomplete —</span> add your Telegram handle so renters can reach you after a booking is accepted.
+            </p>
+            <Link
+              href="/profile"
+              className="shrink-0 text-xs font-bold text-amber-700 bg-amber-100 hover:bg-amber-200 px-3 py-1.5 rounded-lg transition-colors"
+            >
+              Complete profile →
+            </Link>
+          </div>
+        </div>
+      )}
 
       {error ? (
         <main className="max-w-6xl mx-auto px-4 py-10">

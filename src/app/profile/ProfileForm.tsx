@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
 const DOMAIN_MAP: Record<string, string> = {
@@ -36,6 +37,7 @@ export default function ProfileForm({ userId, userEmail, initialFullName, initia
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const router = useRouter()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -60,6 +62,9 @@ export default function ProfileForm({ userId, userEmail, initialFullName, initia
     } else {
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
+      // Redirect back if came from posting flow
+      const next = new URLSearchParams(window.location.search).get('next')
+      if (next) router.push(next)
     }
   }
 
