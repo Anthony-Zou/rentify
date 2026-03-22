@@ -36,7 +36,10 @@ export async function GET(request: NextRequest) {
       if (data.user) {
         await supabase
           .from('profiles')
-          .upsert({ id: data.user.id }, { onConflict: 'id', ignoreDuplicates: true })
+          .upsert(
+            { id: data.user.id, email: data.user.email },
+            { onConflict: 'id', ignoreDuplicates: false }
+          )
       }
       return NextResponse.redirect(`${origin}${next}`)
     }
