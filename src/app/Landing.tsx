@@ -11,10 +11,6 @@ export default function Landing({ isLoggedIn = false }: { isLoggedIn?: boolean }
 
         <div className="relative max-w-6xl mx-auto px-4 py-20 md:py-32">
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-widest text-violet-500 uppercase mb-6 bg-violet-100 px-3 py-1 rounded-full">
-              <span className="w-1.5 h-1.5 rounded-full bg-violet-400 inline-block" />
-              Singapore Universities
-            </span>
             <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight tracking-tight mb-6">
               Rent anything<br />
               <span className="text-violet-600">from fellow students.</span>
