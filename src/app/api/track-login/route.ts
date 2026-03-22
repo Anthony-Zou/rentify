@@ -43,21 +43,3 @@ export async function POST() {
   return NextResponse.json({ ok: true, login_count: newCount })
 }
 
-// GET: verify current profile state (for debugging)
-export async function GET() {
-  const supabase = await createServerClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user) {
-    return NextResponse.json({ error: 'Not logged in' }, { status: 401 })
-  }
-
-  const admin = createAdminClient()
-  const { data: profile, error } = await admin
-    .from('profiles')
-    .select('id, email, login_count, last_login_at')
-    .eq('id', user.id)
-    .single()
-
-  return NextResponse.json({ user_id: user.id, profile, error })
-}
