@@ -60,9 +60,12 @@ export default function Landing() {
                 1
               </div>
               <h3 className="text-base font-semibold text-gray-900 mb-2">List your idle item</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-sm text-gray-500 leading-relaxed mb-3">
                 Upload a photo, set a daily price, and publish in under 2 minutes. Any category welcome.
               </p>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-violet-600 bg-violet-50 px-2.5 py-1 rounded-full">
+                🎓 University email verified
+              </span>
             </div>
             {/* Step 2 */}
             <div className="group">
@@ -70,19 +73,30 @@ export default function Landing() {
                 2
               </div>
               <h3 className="text-base font-semibold text-gray-900 mb-2">Request the dates you need</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-sm text-gray-500 leading-relaxed mb-3">
                 Pick start and end dates, add a short message. The owner gets an email and accepts or declines.
               </p>
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-600 bg-green-50 px-2.5 py-1 rounded-full">
+                ✓ No double bookings
+              </span>
             </div>
             {/* Step 3 */}
             <div className="group">
               <div className="w-10 h-10 bg-violet-600 text-white rounded-xl flex items-center justify-center text-sm font-black mb-4 group-hover:bg-violet-700 transition-colors">
                 3
               </div>
-              <h3 className="text-base font-semibold text-gray-900 mb-2">Meet on campus</h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
-                Once accepted, you'll get the owner's Telegram. Arrange handover at a monitored campus location.
+              <h3 className="text-base font-semibold text-gray-900 mb-2">Meet on campus, safely</h3>
+              <p className="text-sm text-gray-500 leading-relaxed mb-3">
+                Once accepted, you'll get the owner's Telegram. Meet at a campus CCTV location — library, Student Services Centre, or faculty lobby. Both parties show their student ID at handover.
               </p>
+              <div className="flex flex-wrap gap-2">
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
+                  📹 CCTV location
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full">
+                  🪪 Student ID
+                </span>
+              </div>
             </div>
           </div>
         </div>
