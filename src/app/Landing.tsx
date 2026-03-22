@@ -1,6 +1,6 @@
 import Link from 'next/link'
 
-export default function Landing() {
+export default function Landing({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
   return (
     <div>
       {/* ── Hero ──────────────────────────────────────────────────────── */}
@@ -24,12 +24,21 @@ export default function Landing() {
               Gaming console for the weekend. Whatever you need — for just a few days.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Link
-                href="/login"
-                className="px-6 py-3 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200"
-              >
-                Sign up free →
-              </Link>
+              {isLoggedIn ? (
+                <Link
+                  href="/new"
+                  className="px-6 py-3 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200"
+                >
+                  Post your item →
+                </Link>
+              ) : (
+                <Link
+                  href="/login"
+                  className="px-6 py-3 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200"
+                >
+                  Sign up free →
+                </Link>
+              )}
               <a
                 href="#listings"
                 className="px-6 py-3 border border-gray-300 bg-white text-sm font-semibold text-gray-700 rounded-xl hover:bg-gray-50 transition-colors"
@@ -37,9 +46,11 @@ export default function Landing() {
                 Browse listings
               </a>
             </div>
-            <p className="mt-4 text-xs text-gray-400">
-              University email required (.edu.sg or .edu)
-            </p>
+            {!isLoggedIn && (
+              <p className="mt-4 text-xs text-gray-400">
+                University email required (.edu.sg or .edu)
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -209,7 +220,7 @@ export default function Landing() {
             List it in 2 minutes. Earn from gear you're not using.
           </p>
           <Link
-            href="/login?next=/new"
+            href={isLoggedIn ? '/new' : '/login?next=/new'}
             className="inline-block px-8 py-3 bg-white text-violet-700 text-sm font-bold rounded-xl hover:bg-violet-50 transition-colors shadow-lg"
           >
             Post your first item →

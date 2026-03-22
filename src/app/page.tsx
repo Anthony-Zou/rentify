@@ -54,7 +54,7 @@ export default async function HomePage() {
         </div>
       )}
 
-      <Landing />
+      <Landing isLoggedIn={!!user} />
 
       {error ? (
         <main className="max-w-6xl mx-auto px-4 py-10">
