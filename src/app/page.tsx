@@ -54,29 +54,24 @@ export default async function HomePage() {
         </div>
       )}
 
+      <Landing />
+
       {error ? (
         <main className="max-w-6xl mx-auto px-4 py-10">
           <p className="text-red-500 text-sm">Failed to load listings. Please try again later.</p>
         </main>
-      ) : user ? (
-        // Logged-in: straight to listings grid
-        <main className="max-w-6xl mx-auto px-4 py-10">
-          <ListingsGrid listings={listingData} />
-        </main>
       ) : (
-        // Guest: landing page sections + listings below
-        <>
-          <Landing />
-          <section id="listings" className="max-w-6xl mx-auto px-4 py-12">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-lg font-semibold text-gray-900">Available now</h2>
+        <section id="listings" className="max-w-6xl mx-auto px-4 py-12">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-lg font-semibold text-gray-900">Available now</h2>
+            {!user && (
               <a href="/login" className="text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors">
                 Sign up to request →
               </a>
-            </div>
-            <ListingsGrid listings={listingData} />
-          </section>
-        </>
+            )}
+          </div>
+          <ListingsGrid listings={listingData} />
+        </section>
       )}
     </div>
   )
