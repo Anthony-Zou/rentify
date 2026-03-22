@@ -32,6 +32,10 @@ export default function NewListingForm({ userId }: { userId: string }) {
 
     try {
       const supabase = createClient()
+
+      // Ensure a profile row exists before inserting listing (FK constraint)
+      await supabase.from('profiles').upsert({ id: userId }, { onConflict: 'id', ignoreDuplicates: true })
+
       let imageUrl: string | null = null
 
       if (imageFile) {
