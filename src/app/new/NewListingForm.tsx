@@ -82,7 +82,7 @@ export default function NewListingForm({ userId }: { userId: string }) {
           onChange={(e) => setTitle(e.target.value)}
           placeholder="e.g. Sony A7III Camera"
           required
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
         />
       </div>
 
@@ -96,7 +96,7 @@ export default function NewListingForm({ userId }: { userId: string }) {
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Condition, accessories included, any restrictions…"
           rows={4}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent resize-none"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none"
         />
       </div>
 
@@ -113,8 +113,8 @@ export default function NewListingForm({ userId }: { userId: string }) {
               onClick={() => setCategory(c)}
               className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                 category === c
-                  ? 'bg-black text-white'
-                  : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
+                  ? 'bg-violet-600 text-white shadow-sm shadow-violet-200'
+                  : 'bg-white border border-gray-300 text-gray-600 hover:bg-violet-50 hover:border-violet-200 hover:text-violet-700'
               }`}
             >
               {c}
@@ -138,7 +138,7 @@ export default function NewListingForm({ userId }: { userId: string }) {
             min="0"
             step="0.01"
             required
-            className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+            className="w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
           />
         </div>
       </div>
@@ -176,7 +176,7 @@ export default function NewListingForm({ userId }: { userId: string }) {
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full py-2.5 bg-violet-600 text-white text-sm font-semibold rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {loading ? 'Posting…' : 'Post item'}
       </button>

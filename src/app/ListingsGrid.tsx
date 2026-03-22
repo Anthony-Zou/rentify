@@ -36,17 +36,17 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
           placeholder="Search items…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full sm:max-w-xs px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white"
+          className="w-full sm:max-w-xs px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white"
         />
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map((c) => (
             <button
               key={c}
               onClick={() => setCategory(c)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
                 category === c
-                  ? 'bg-black text-white'
-                  : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
+                  ? 'bg-violet-600 text-white shadow-sm shadow-violet-200'
+                  : 'bg-white border border-gray-300 text-gray-600 hover:bg-violet-50 hover:border-violet-200 hover:text-violet-700'
               }`}
             >
               {c}
@@ -65,12 +65,12 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
       )}
 
       {/* Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
         {filtered.map((listing) => (
           <Link
             key={listing.id}
             href={`/listings/${listing.id}`}
-            className="group bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+            className="group bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg hover:shadow-violet-100 hover:border-violet-200 transition-all duration-200"
           >
             <div className="relative aspect-[4/3] bg-gray-100">
               {listing.image_url ? (
@@ -90,21 +90,22 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
               )}
               {!listing.is_available && (
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="bg-black/70 text-white text-xs font-medium px-2.5 py-1 rounded-full">
+                  <span className="bg-black/70 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
                     Rented out
                   </span>
                 </div>
               )}
+              {/* Category pill on image */}
+              <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm text-gray-600 text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                {listing.category}
+              </span>
             </div>
             <div className="p-4">
-              <h2 className="text-sm font-medium text-gray-900 truncate">{listing.title}</h2>
-              <div className="mt-1 flex items-center justify-between">
-                <p className="text-sm text-gray-500">
-                  <span className="font-semibold text-gray-900">${listing.daily_price}</span>
-                  {' '}/day
-                </p>
-                <span className="text-xs text-gray-400">{listing.category}</span>
-              </div>
+              <h2 className="text-sm font-semibold text-gray-900 truncate mb-1">{listing.title}</h2>
+              <p className="text-sm text-gray-400">
+                <span className="font-bold text-violet-600 text-base">${listing.daily_price}</span>
+                <span className="text-xs"> /day</span>
+              </p>
             </div>
           </Link>
         ))}
