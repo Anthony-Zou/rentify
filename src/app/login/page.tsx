@@ -62,8 +62,8 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-violet-50 flex items-center justify-center px-4">
       <div className="bg-white rounded-2xl border border-gray-200 shadow-xl shadow-violet-100 p-8 max-w-sm w-full">
-        <Link href="/" className="text-lg font-black text-violet-600 hover:text-violet-700 mb-6 inline-block">
-          Borlo
+        <Link href="/" className="text-lg font-black mb-6 inline-block">
+          <span className="text-gray-900">Bor</span><span className="text-violet-600">lo</span>
         </Link>
 
         {step === 'email' ? (

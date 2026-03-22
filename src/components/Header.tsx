@@ -30,8 +30,8 @@ export default async function Header({ user, showPostButton = false, showLogout 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-10 relative">
       <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link href="/" className="text-xl font-black text-violet-600 tracking-tight hover:text-violet-700 transition-colors">
-          Borlo
+        <Link href="/" className="text-xl font-black tracking-tight">
+          <span className="text-gray-900">Bor</span><span className="text-violet-600">lo</span>
         </Link>
 
         {/* ── Desktop nav (hidden on mobile) ─────────────────────────── */}
