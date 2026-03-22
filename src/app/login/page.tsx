@@ -53,6 +53,8 @@ export default function LoginPage() {
     if (verifyError) {
       setError(verifyError.message)
     } else {
+      // Track login server-side (update email, login_count, last_login_at)
+      await fetch('/api/track-login', { method: 'POST' })
       const next = new URLSearchParams(window.location.search).get('next') ?? '/'
       router.push(next)
       router.refresh()
