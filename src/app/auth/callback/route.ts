@@ -34,10 +34,22 @@ export async function GET(request: NextRequest) {
     if (!error) {
       // Create profile row on first login if it doesn't exist yet
       if (data.user) {
+        // Fetch current login_count to increment it
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('login_count')
+          .eq('id', data.user.id)
+          .single()
+
         await supabase
           .from('profiles')
           .upsert(
-            { id: data.user.id, email: data.user.email },
+            {
+              id: data.user.id,
+              email: data.user.email,
+              last_login_at: new Date().toISOString(),
+              login_count: (profile?.login_count ?? 0) + 1,
+            },
             { onConflict: 'id', ignoreDuplicates: false }
           )
       }
