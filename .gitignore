@@ -45,3 +45,5 @@ test-results/
 docs/product.md
 .gitignore
 .claude/settings.json
+docs/*
+docs/product.pdf
