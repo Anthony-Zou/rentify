@@ -12,13 +12,16 @@ export default async function HomePage() {
   const [{ data: listings, error }, { data: { user } }] = await Promise.all([
     supabase
       .from('listings')
-      .select('id, title, daily_price, image_url, is_available, category')
+      .select('id, title, daily_price, image_url, is_available, category, profiles!owner_id(university_name)')
       .order('is_available', { ascending: false })
       .order('id', { ascending: false }),
     supabase.auth.getUser(),
   ])
 
-  const listingData = listings ?? []
+  const listingData = (listings ?? []).map((l) => {
+    const raw = (l.profiles as unknown as { university_name: string | null }[] | null)?.[0]?.university_name ?? null
+    return { ...l, owner_university: raw ? raw.split('—')[0].trim() : null }
+  })
 
   let profileIncomplete = false
   if (user) {

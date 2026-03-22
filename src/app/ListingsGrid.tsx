@@ -14,42 +14,55 @@ type Listing = {
   image_url: string | null
   is_available: boolean
   category: string
+  owner_university: string | null
 }
 
 export default function ListingsGrid({ listings }: { listings: Listing[] }) {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
+  const [school, setSchool] = useState('All')
+
+  // Derive unique school list from listings
+  const schools = useMemo(() => {
+    const names = listings.map((l) => l.owner_university).filter(Boolean) as string[]
+    return ['All', ...Array.from(new Set(names)).sort()]
+  }, [listings])
 
   const filtered = useMemo(() => {
     return listings.filter((l) => {
       const matchesSearch = l.title.toLowerCase().includes(search.toLowerCase())
       const matchesCategory = category === 'All' || l.category === category
-      return matchesSearch && matchesCategory
+      const matchesSchool = school === 'All' || l.owner_university === school
+      return matchesSearch && matchesCategory && matchesSchool
     })
-  }, [listings, search, category])
+  }, [listings, search, category, school])
 
   return (
     <div>
       {/* Search + filter bar */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <input
-          type="text"
-          placeholder="Search items…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="w-full sm:max-w-xs px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white"
-        />
-        <AIComingSoon
-          label="Smart search"
-          description="Describe what you need in plain English — e.g. 'something to film a short movie this weekend' — and AI will find the right items for you."
-        >
-          <button
-            type="button"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-violet-300 text-xs font-semibold text-violet-500 hover:bg-violet-50 transition-colors whitespace-nowrap"
+      <div className="flex flex-col gap-3 mb-6">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            type="text"
+            placeholder="Search items…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full sm:max-w-xs px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white"
+          />
+          <AIComingSoon
+            label="Smart search"
+            description="Describe what you need in plain English — e.g. 'something to film a short movie this weekend' — and AI will find the right items for you."
           >
-            <span>✦</span> Smart search
-          </button>
-        </AIComingSoon>
+            <button
+              type="button"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-violet-300 text-xs font-semibold text-violet-500 hover:bg-violet-50 transition-colors whitespace-nowrap"
+            >
+              <span>✦</span> Smart search
+            </button>
+          </AIComingSoon>
+        </div>
+
+        {/* Category pills */}
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map((c) => (
             <button
@@ -65,6 +78,25 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
             </button>
           ))}
         </div>
+
+        {/* School pills — only shown when there's more than one school */}
+        {schools.length > 2 && (
+          <div className="flex flex-wrap gap-2">
+            {schools.map((s) => (
+              <button
+                key={s}
+                onClick={() => setSchool(s)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
+                  school === s
+                    ? 'bg-gray-800 text-white'
+                    : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                {s === 'All' ? '🎓 All schools' : s}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Empty state */}
@@ -114,10 +146,17 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
             </div>
             <div className="p-4">
               <h2 className="text-sm font-semibold text-gray-900 truncate mb-1">{listing.title}</h2>
-              <p className="text-sm text-gray-400">
-                <span className="font-bold text-violet-600 text-base">${listing.daily_price}</span>
-                <span className="text-xs"> /day</span>
-              </p>
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm text-gray-400">
+                  <span className="font-bold text-violet-600 text-base">${listing.daily_price}</span>
+                  <span className="text-xs"> /day</span>
+                </p>
+                {listing.owner_university && (
+                  <span className="text-[10px] font-semibold text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full whitespace-nowrap">
+                    {listing.owner_university}
+                  </span>
+                )}
+              </div>
             </div>
           </Link>
         ))}
