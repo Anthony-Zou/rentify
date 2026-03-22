@@ -116,6 +116,10 @@ export default function RequestForm({
 
       {error && <p className="text-sm text-red-500">{error}</p>}
 
+      <p className="text-xs text-gray-400 leading-relaxed">
+        By requesting, you agree that all arrangements are directly between you and the owner. Borlo is a matching platform only and is not liable for any loss, damage, or disputes.
+      </p>
+
       <button
         type="submit"
         disabled={loading}
