@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Borlo — Rent anything on campus",
-  description: "P2P rental marketplace for NUS and NTU students. Rent cameras, consoles, drones and more from fellow students.",
+  description: "P2P rental marketplace for university students in Singapore. Rent anything from fellow students.",
 };
 
 export default function RootLayout({

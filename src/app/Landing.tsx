@@ -8,7 +8,7 @@ export default function Landing() {
         <div className="max-w-6xl mx-auto px-4 py-20 md:py-28">
           <div className="max-w-2xl">
             <span className="inline-block text-xs font-semibold tracking-widest text-gray-400 uppercase mb-6">
-              NTU &amp; NUS · Singapore
+              Singapore Universities
             </span>
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight mb-6">
               Rent anything<br />from fellow students.
