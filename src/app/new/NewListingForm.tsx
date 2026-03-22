@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import AIComingSoon from '@/components/AIComingSoon'
 
 const CATEGORIES = ['Cameras', 'Gaming', 'Audio', 'Sports', 'Electronics', 'Other']
 
@@ -71,6 +72,28 @@ export default function NewListingForm({ userId }: { userId: string }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6 bg-white rounded-xl border border-gray-200 p-6">
+
+      {/* ── AI: Generate listing from photo ─────────────────────────── */}
+      <AIComingSoon
+        label="Generate listing with AI"
+        description="Snap a photo and AI will write the title, description, category, and suggest a price — list in under 30 seconds."
+      >
+        <div className="flex items-center gap-3 p-3 rounded-xl border border-dashed border-violet-300 bg-violet-50 hover:bg-violet-100 transition-colors">
+          <span className="flex-shrink-0 w-8 h-8 bg-violet-600 rounded-lg flex items-center justify-center text-white text-base">✦</span>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold text-violet-700">Generate listing with AI</p>
+            <p className="text-xs text-violet-400">Take a photo — AI fills everything in for you</p>
+          </div>
+          <span className="ml-auto shrink-0 text-[10px] font-bold text-violet-400 bg-violet-100 border border-violet-200 px-2 py-0.5 rounded-full">Soon</span>
+        </div>
+      </AIComingSoon>
+
+      <div className="flex items-center gap-3">
+        <span className="flex-1 h-px bg-gray-100" />
+        <span className="text-xs text-gray-400">or fill in manually</span>
+        <span className="flex-1 h-px bg-gray-100" />
+      </div>
+
       {/* Title */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -125,9 +148,19 @@ export default function NewListingForm({ userId }: { userId: string }) {
 
       {/* Daily price */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Daily price (SGD) <span className="text-red-500">*</span>
-        </label>
+        <div className="flex items-center justify-between mb-1">
+          <label className="block text-sm font-medium text-gray-700">
+            Daily price (SGD) <span className="text-red-500">*</span>
+          </label>
+          <AIComingSoon
+            label="AI price suggestion"
+            description="Based on similar items on Borlo, AI will recommend a competitive daily price to maximise your bookings."
+          >
+            <span className="text-xs font-semibold text-violet-500 hover:text-violet-700 cursor-pointer flex items-center gap-1">
+              <span>✦</span> Suggest price
+            </span>
+          </AIComingSoon>
+        </div>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm select-none">$</span>
           <input

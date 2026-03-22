@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import AIComingSoon from '@/components/AIComingSoon'
 
 const CATEGORIES = ['All', 'Cameras', 'Gaming', 'Audio', 'Sports', 'Electronics', 'Other']
 
@@ -38,6 +39,17 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
           onChange={(e) => setSearch(e.target.value)}
           className="w-full sm:max-w-xs px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white"
         />
+        <AIComingSoon
+          label="Smart search"
+          description="Describe what you need in plain English — e.g. 'something to film a short movie this weekend' — and AI will find the right items for you."
+        >
+          <button
+            type="button"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-dashed border-violet-300 text-xs font-semibold text-violet-500 hover:bg-violet-50 transition-colors whitespace-nowrap"
+          >
+            <span>✦</span> Smart search
+          </button>
+        </AIComingSoon>
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map((c) => (
             <button
