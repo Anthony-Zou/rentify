@@ -60,6 +60,15 @@ export default function MobileMenu({
           <div className="absolute top-full left-0 w-full bg-white border-t border-gray-200 shadow-sm z-50 transition-all duration-200 opacity-100 translate-y-0">
             <nav className="px-4 py-2 flex flex-col">
               <Link
+                href="/pool"
+                onClick={() => setOpen(false)}
+                className="h-12 flex items-center gap-2 text-base text-gray-900 hover:text-gray-600 transition-colors"
+              >
+                Borlo Pool
+                <span className="text-[9px] font-bold text-amber-500 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full leading-none">Soon</span>
+              </Link>
+
+              <Link
                 href="/new"
                 onClick={() => setOpen(false)}
                 className="h-12 flex items-center text-base text-gray-900 hover:text-gray-600 transition-colors"

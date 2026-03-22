@@ -128,6 +128,62 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* ── Borlo Pool ────────────────────────────────────────────────── */}
+      <section className="bg-white border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 py-16">
+          <div className="rounded-2xl bg-gradient-to-br from-violet-600 to-violet-800 p-8 md:p-12 flex flex-col md:flex-row items-start md:items-center gap-8">
+            <div className="flex-1">
+              <div className="inline-flex items-center gap-2 bg-white/10 text-white text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full mb-4">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block animate-pulse" />
+                Coming soon
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black text-white mb-3 leading-tight">
+                Borlo Pool —<br />co-own, list, earn together.
+              </h2>
+              <p className="text-violet-200 text-sm leading-relaxed max-w-lg mb-6">
+                Got your eye on a drone or a cinema camera but can't justify the price alone?
+                Pool with 2–5 friends, split the cost, list it on Borlo, and share the rental income.
+                Your gear pays for itself.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <a
+                  href="/pool"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-white text-violet-700 text-sm font-bold rounded-xl hover:bg-violet-50 transition-colors"
+                >
+                  Learn more →
+                </a>
+                <span className="inline-flex items-center gap-2 text-sm text-violet-300">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  Launching after core platform is stable
+                </span>
+              </div>
+            </div>
+
+            {/* How it works mini-steps */}
+            <div className="w-full md:w-64 flex-shrink-0 space-y-3">
+              {[
+                { n: '1', label: 'Form a pool', sub: '2–5 students, any item' },
+                { n: '2', label: 'Split the cost', sub: 'Each contributes a share' },
+                { n: '3', label: 'List on Borlo', sub: 'Pool account earns rental income' },
+                { n: '4', label: 'Earn together', sub: 'Revenue split by ownership share' },
+              ].map(({ n, label, sub }) => (
+                <div key={n} className="flex items-center gap-3">
+                  <span className="flex-shrink-0 w-7 h-7 rounded-lg bg-white/15 text-white text-xs font-black flex items-center justify-center">
+                    {n}
+                  </span>
+                  <div>
+                    <p className="text-white text-sm font-semibold leading-none mb-0.5">{label}</p>
+                    <p className="text-violet-300 text-xs">{sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Bottom CTA ────────────────────────────────────────────────── */}
       <section className="bg-gradient-to-br from-violet-700 to-violet-900">
         <div className="max-w-6xl mx-auto px-4 py-16 text-center">

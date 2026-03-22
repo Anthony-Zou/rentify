@@ -40,6 +40,14 @@ export default async function Header({ user, showPostButton = false, showLogout 
             <LogoutButton />
           ) : (
             <>
+              <Link
+                href="/pool"
+                className="relative flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-violet-600 transition-colors"
+              >
+                Pool
+                <span className="text-[9px] font-bold text-amber-500 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-full leading-none">Soon</span>
+              </Link>
+
               {showPostButton && (
                 <Link
                   href="/new"
