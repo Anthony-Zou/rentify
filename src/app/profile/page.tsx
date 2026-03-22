@@ -73,6 +73,7 @@ export default async function ProfilePage() {
           <h1 className="text-2xl font-semibold text-gray-900 mb-6">My profile</h1>
           <ProfileForm
             userId={user.id}
+            userEmail={user.email ?? ''}
             initialFullName={profile?.full_name ?? ''}
             initialTelegram={profile?.telegram_handle ?? ''}
             initialUniversity={profile?.university_name ?? ''}

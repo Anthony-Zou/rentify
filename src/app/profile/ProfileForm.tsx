@@ -3,17 +3,36 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 
+const DOMAIN_MAP: Record<string, string> = {
+  'u.nus.edu': 'NUS — National University of Singapore',
+  'nus.edu.sg': 'NUS — National University of Singapore',
+  'e.ntu.edu.sg': 'NTU — Nanyang Technological University',
+  'ntu.edu.sg': 'NTU — Nanyang Technological University',
+  'smu.edu.sg': 'SMU — Singapore Management University',
+  'mymail.sutd.edu.sg': 'SUTD — Singapore University of Technology and Design',
+  'sutd.edu.sg': 'SUTD — Singapore University of Technology and Design',
+  'singaporetech.edu.sg': 'SIT — Singapore Institute of Technology',
+  'suss.edu.sg': 'SUSS — Singapore University of Social Sciences',
+}
+
+function detectUniversity(email: string): string {
+  const domain = email.split('@')[1]?.toLowerCase() ?? ''
+  return DOMAIN_MAP[domain] ?? ''
+}
+
 type Props = {
   userId: string
+  userEmail: string
   initialFullName: string
   initialTelegram: string
   initialUniversity: string
 }
 
-export default function ProfileForm({ userId, initialFullName, initialTelegram, initialUniversity }: Props) {
+export default function ProfileForm({ userId, userEmail, initialFullName, initialTelegram, initialUniversity }: Props) {
   const [fullName, setFullName] = useState(initialFullName)
   const [telegram, setTelegram] = useState(initialTelegram)
-  const [university, setUniversity] = useState(initialUniversity)
+  const detectedUniversity = detectUniversity(userEmail)
+  const [university, setUniversity] = useState(initialUniversity || detectedUniversity)
   const [loading, setLoading] = useState(false)
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -77,19 +96,19 @@ export default function ProfileForm({ userId, initialFullName, initialTelegram, 
 
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">University</label>
-        <select
-          value={university}
-          onChange={(e) => setUniversity(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent bg-white"
-        >
-          <option value="">Select your university</option>
-          <option value="NUS">NUS — National University of Singapore</option>
-          <option value="NTU">NTU — Nanyang Technological University</option>
-          <option value="SMU">SMU — Singapore Management University</option>
-          <option value="SUTD">SUTD — Singapore University of Technology and Design</option>
-          <option value="SIT">SIT — Singapore Institute of Technology</option>
-          <option value="SUSS">SUSS — Singapore University of Social Sciences</option>
-        </select>
+        {detectedUniversity ? (
+          <div className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+            {university || detectedUniversity}
+          </div>
+        ) : (
+          <input
+            type="text"
+            value={university}
+            onChange={(e) => setUniversity(e.target.value)}
+            placeholder="Your university"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+          />
+        )}
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
