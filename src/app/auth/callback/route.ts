@@ -35,13 +35,17 @@ export async function GET(request: NextRequest) {
       // Create profile row on first login if it doesn't exist yet
       if (data.user) {
         // Fetch current login_count to increment it
-        const { data: profile } = await supabase
+        const { data: profile, error: selectError } = await supabase
           .from('profiles')
           .select('login_count')
           .eq('id', data.user.id)
           .single()
 
-        await supabase
+        if (selectError && selectError.code !== 'PGRST116') {
+          console.error('[auth/callback] profile select error:', selectError)
+        }
+
+        const { error: upsertError } = await supabase
           .from('profiles')
           .upsert(
             {
@@ -52,6 +56,12 @@ export async function GET(request: NextRequest) {
             },
             { onConflict: 'id', ignoreDuplicates: false }
           )
+
+        if (upsertError) {
+          console.error('[auth/callback] profile upsert error:', upsertError)
+        } else {
+          console.log('[auth/callback] profile updated for', data.user.email, 'login_count ->', (profile?.login_count ?? 0) + 1)
+        }
       }
       return NextResponse.redirect(`${origin}${next}`)
     }
