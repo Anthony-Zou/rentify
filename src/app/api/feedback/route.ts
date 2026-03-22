@@ -40,7 +40,9 @@ export async function POST(req: NextRequest) {
   })
 
   if (!res.ok) {
-    return NextResponse.json({ error: 'Failed to send.' }, { status: 500 })
+    const body = await res.text()
+    console.error('Resend error:', res.status, body)
+    return NextResponse.json({ error: 'Failed to send.', detail: body }, { status: 500 })
   }
 
   return NextResponse.json({ ok: true })
