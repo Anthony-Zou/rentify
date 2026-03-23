@@ -9,15 +9,23 @@ function findOverlap(start: string, end: string, ranges: BlockedRange[]): Blocke
   return ranges.find((r) => start <= r.end_date && end >= r.start_date)
 }
 
+function calcDays(start: string, end: string): number {
+  if (!start || !end) return 0
+  const diff = new Date(end).getTime() - new Date(start).getTime()
+  return Math.max(0, Math.round(diff / 86400000) + 1)
+}
+
 export default function RequestForm({
   listingId,
   ownerId,
   renterId,
+  dailyPrice,
   blockedRanges,
 }: {
   listingId: string
   ownerId: string
   renterId: string
+  dailyPrice: number
   blockedRanges: BlockedRange[]
 }) {
   const today = new Date().toISOString().split('T')[0]
@@ -101,6 +109,13 @@ export default function RequestForm({
         </div>
       </div>
 
+      {startDate && endDate && calcDays(startDate, endDate) > 0 && (
+        <div className="flex items-center justify-between bg-violet-50 border border-violet-100 rounded-lg px-4 py-3 text-sm">
+          <span className="text-gray-500">{calcDays(startDate, endDate)} day{calcDays(startDate, endDate) > 1 ? 's' : ''} × ${dailyPrice}/day</span>
+          <span className="font-bold text-violet-600">${calcDays(startDate, endDate) * dailyPrice} total</span>
+        </div>
+      )}
+
       <div>
         <label className="block text-xs font-medium text-gray-600 mb-1">
           Message to owner <span className="text-gray-400 font-normal">(optional)</span>
@@ -123,7 +138,7 @@ export default function RequestForm({
       <button
         type="submit"
         disabled={loading}
-        className="w-full py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="w-full py-2.5 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         {loading ? 'Sending…' : 'Request to Rent →'}
       </button>

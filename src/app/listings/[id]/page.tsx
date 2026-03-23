@@ -20,7 +20,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
   const [listingResult, userResult] = await Promise.all([
     supabase
       .from('listings')
-      .select('id, title, description, daily_price, image_url, owner_id, is_available')
+      .select('id, title, description, daily_price, image_url, owner_id, is_available, category')
       .eq('id', id)
       .single(),
     supabase.auth.getUser(),
@@ -93,11 +93,16 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           <div className="flex items-start justify-between gap-4 mb-4">
             <div>
               <h1 className="text-2xl font-semibold text-gray-900">{listing.title}</h1>
-              {!listing.is_available && (
-                <span className="mt-1 inline-block text-xs font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
-                  Currently rented out
+              <div className="flex flex-wrap items-center gap-2 mt-1">
+                <span className="text-xs font-semibold text-violet-600 bg-violet-50 px-2 py-0.5 rounded-full">
+                  {listing.category}
                 </span>
-              )}
+                {!listing.is_available && (
+                  <span className="text-xs font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
+                    Currently rented out
+                  </span>
+                )}
+              </div>
             </div>
             <div className="text-right shrink-0">
               <span className="text-2xl font-bold text-violet-600">${listing.daily_price}</span>
@@ -161,11 +166,37 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                 </p>
               )
             ) : existingRequest?.status === 'pending' ? (
-              <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-4 py-3 rounded-lg">
-                <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                Request sent — waiting for owner to respond
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-4 py-3 rounded-lg">
+                  <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Request sent — waiting for owner to respond
+                </div>
+                <div className="flex gap-4">
+                  <form action={async () => {
+                    'use server'
+                    const supabase = await createServerClient()
+                    await supabase.from('rental_requests').delete().eq('id', existingRequest!.id).eq('renter_id', user!.id)
+                    const { redirect } = await import('next/navigation')
+                    redirect(`/listings/${listing.id}?change=1`)
+                  }}>
+                    <button type="submit" className="text-xs text-violet-500 hover:text-violet-700 transition-colors">
+                      Change dates
+                    </button>
+                  </form>
+                  <form action={async () => {
+                    'use server'
+                    const supabase = await createServerClient()
+                    await supabase.from('rental_requests').delete().eq('id', existingRequest!.id).eq('renter_id', user!.id)
+                    const { redirect } = await import('next/navigation')
+                    redirect(`/listings/${listing.id}`)
+                  }}>
+                    <button type="submit" className="text-xs text-gray-400 hover:text-red-500 transition-colors">
+                      Cancel request
+                    </button>
+                  </form>
+                </div>
               </div>
             ) : existingRequest?.status === 'declined' ? (
               <>
@@ -176,6 +207,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                   listingId={listing.id}
                   ownerId={listing.owner_id}
                   renterId={user.id}
+                  dailyPrice={listing.daily_price}
                   blockedRanges={blockedRanges}
                 />
               </>
@@ -184,6 +216,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                 listingId={listing.id}
                 ownerId={listing.owner_id}
                 renterId={user.id}
+                dailyPrice={listing.daily_price}
                 blockedRanges={blockedRanges}
               />
             )}

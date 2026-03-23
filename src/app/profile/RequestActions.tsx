@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase'
 
 type RentalRequest = {
   id: string
+  listing_id: string
   start_date: string
   end_date: string
   message: string | null
@@ -25,7 +26,11 @@ export default function RequestActions({ requests: initial }: { requests: Rental
     const supabase = createClient()
     const { error: rpcError } = await supabase.rpc('accept_rental_request', { request_id: id })
     if (!rpcError) {
+      // Auto-mark listing as unavailable
       const accepted = requests.find((r) => r.id === id)
+      if (accepted) {
+        await supabase.from('listings').update({ is_available: false }).eq('id', accepted.listing_id)
+      }
       setRequests((prev) =>
         prev.filter((r) => {
           if (r.id === id) return false
@@ -103,7 +108,7 @@ export default function RequestActions({ requests: initial }: { requests: Rental
                 <button
                   onClick={() => handleAccept(req.id)}
                   disabled={isProcessing}
-                  className="px-3 py-1.5 bg-black text-white text-xs font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 transition-colors"
+                  className="px-3 py-1.5 bg-violet-600 text-white text-xs font-medium rounded-lg hover:bg-violet-700 disabled:opacity-50 transition-colors"
                 >
                   {isProcessing ? '…' : 'Accept'}
                 </button>
