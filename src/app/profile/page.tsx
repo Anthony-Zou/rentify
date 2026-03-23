@@ -41,6 +41,7 @@ export default async function ProfilePage() {
 
   let incomingRequests: {
     id: string
+    listing_id: string
     start_date: string
     end_date: string
     message: string | null
