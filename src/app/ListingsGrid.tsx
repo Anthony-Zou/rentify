@@ -79,8 +79,8 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
           ))}
         </div>
 
-        {/* School pills — only shown when there's more than one school */}
-        {schools.length > 2 && (
+        {/* School pills — only shown when at least one school is known */}
+        {schools.length > 1 && (
           <div className="flex flex-wrap gap-2">
             {schools.map((s) => (
               <button
