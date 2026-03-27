@@ -41,6 +41,18 @@ export default async function Header({ user, showPostButton = false, showLogout 
           ) : (
             <>
               <Link
+                href="/about"
+                className="px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-violet-600 transition-colors"
+              >
+                About
+              </Link>
+              <Link
+                href="/feedback"
+                className="px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-violet-600 transition-colors"
+              >
+                Feedback
+              </Link>
+              <Link
                 href="/pool"
                 className="relative flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-500 hover:text-violet-600 transition-colors"
               >
