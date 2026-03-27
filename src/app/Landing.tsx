@@ -17,66 +17,107 @@ export default function Landing({
         <div className="pointer-events-none absolute -top-24 -right-24 w-96 h-96 rounded-full bg-violet-200/40 blur-3xl" />
         <div className="pointer-events-none absolute bottom-0 left-1/3 w-64 h-64 rounded-full bg-violet-300/20 blur-2xl" />
 
-        <div className="relative max-w-6xl mx-auto px-4 py-20 md:py-32">
-          <div className="max-w-2xl">
-            <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight tracking-tight mb-6">
-              Rent anything<br />
-              <span className="text-violet-600">from fellow students.</span>
-            </h1>
-            <p className="text-lg text-gray-500 leading-relaxed mb-10 max-w-xl">
-              Camera for your grad shoot. Suit for your internship interview.
-              Gaming console for the weekend. Whatever you need — for just a few days.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {isLoggedIn ? (
-                <Link
-                  href="/new"
-                  className="px-6 py-3 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200"
-                >
-                  Post your item →
-                </Link>
-              ) : (
-                <Link
-                  href="/login"
-                  className="px-6 py-3 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200"
-                >
-                  Sign up free →
-                </Link>
-              )}
-              <a
-                href="#listings"
-                className="px-6 py-3 border border-gray-300 bg-white text-sm font-semibold text-gray-700 rounded-xl hover:bg-gray-50 transition-colors"
-              >
-                Browse listings
-              </a>
-            </div>
-            {!isLoggedIn && (
-              <p className="mt-4 text-xs text-gray-400">
-                University email required (.edu.sg or .edu)
-              </p>
-            )}
+        <div className="relative max-w-6xl mx-auto px-4 py-16 md:py-24">
+          <div className="flex flex-col md:flex-row items-center gap-12">
 
-            {/* Live stats */}
-            {(listingCount > 0 || studentCount > 0) && (
-              <div className="flex flex-wrap gap-6 mt-8">
-                {listingCount > 0 && (
-                  <div>
-                    <p className="text-2xl font-black text-gray-900">{listingCount}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">items listed</p>
-                  </div>
+            {/* Left — copy */}
+            <div className="flex-1 min-w-0">
+              <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight tracking-tight mb-6">
+                Rent anything<br />
+                <span className="text-violet-600">from fellow students.</span>
+              </h1>
+              <p className="text-lg text-gray-500 leading-relaxed mb-10 max-w-xl">
+                Camera for your grad shoot. Suit for your internship interview.
+                Gaming console for the weekend. Whatever you need — for just a few days.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {isLoggedIn ? (
+                  <Link
+                    href="/new"
+                    className="px-6 py-3 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200"
+                  >
+                    Post your item →
+                  </Link>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="px-6 py-3 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200"
+                  >
+                    Sign up free →
+                  </Link>
                 )}
-                {studentCount > 0 && (
-                  <div>
-                    <p className="text-2xl font-black text-gray-900">{studentCount}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">students joined</p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-2xl font-black text-gray-900">5+</p>
-                  <p className="text-xs text-gray-400 mt-0.5">universities</p>
-                </div>
+                <a
+                  href="#listings"
+                  className="px-6 py-3 border border-gray-300 bg-white text-sm font-semibold text-gray-700 rounded-xl hover:bg-gray-50 transition-colors"
+                >
+                  Browse listings
+                </a>
               </div>
-            )}
+              {!isLoggedIn && (
+                <p className="mt-4 text-xs text-gray-400">
+                  University email required (.edu.sg or .edu)
+                </p>
+              )}
+
+              {/* Live stats */}
+              {(listingCount > 0 || studentCount > 0) && (
+                <div className="flex flex-wrap gap-6 mt-8">
+                  {listingCount > 0 && (
+                    <div>
+                      <p className="text-2xl font-black text-gray-900">{listingCount}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">items listed</p>
+                    </div>
+                  )}
+                  {studentCount > 0 && (
+                    <div>
+                      <p className="text-2xl font-black text-gray-900">{studentCount}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">students joined</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-2xl font-black text-gray-900">5+</p>
+                    <p className="text-xs text-gray-400 mt-0.5">universities</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Right — mock listing cards */}
+            <div className="hidden md:flex flex-col gap-3 w-72 shrink-0 select-none">
+              {[
+                { title: 'Sony A7III Mirrorless Camera', price: 28, tag: 'Electronics', school: 'NUS', available: true },
+                { title: 'Badminton Racket Set (2 rackets)', price: 8, tag: 'Sports', school: 'NTU', available: true },
+                { title: 'Casio FX-9860GIII Calculator', price: 5, tag: 'Study', school: 'SMU', available: true },
+                { title: 'Formal Suit (M, navy)', price: 18, tag: 'Lifestyle', school: 'NUS', available: false },
+              ].map((card) => (
+                <div
+                  key={card.title}
+                  className="bg-white rounded-2xl border border-gray-200 shadow-sm px-4 py-3 flex items-center gap-3"
+                >
+                  {/* Colour swatch as image placeholder */}
+                  <div className={`w-12 h-12 rounded-xl shrink-0 flex items-center justify-center text-white text-lg font-black ${
+                    card.tag === 'Electronics' ? 'bg-violet-500' :
+                    card.tag === 'Sports' ? 'bg-green-500' :
+                    card.tag === 'Study' ? 'bg-blue-500' :
+                    'bg-amber-500'
+                  }`}>
+                    {card.tag === 'Electronics' ? '📷' :
+                     card.tag === 'Sports' ? '🏸' :
+                     card.tag === 'Study' ? '🧮' : '👔'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-gray-900 truncate">{card.title}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{card.school} · {card.tag}</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm font-black text-violet-600">${card.price}</p>
+                    <p className="text-[10px] text-gray-400">/day</p>
+                  </div>
+                </div>
+              ))}
+              <p className="text-center text-xs text-gray-400 mt-1">+ {listingCount > 4 ? listingCount - 4 : 'more'} more listings →</p>
+            </div>
+
           </div>
         </div>
       </section>
