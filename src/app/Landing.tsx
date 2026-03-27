@@ -139,6 +139,138 @@ export default function Landing({
         </div>
       </section>
 
+      {/* ── Earn section ──────────────────────────────────────────────── */}
+      <section className="bg-gray-50 border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 py-16">
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-xs font-semibold tracking-widest text-violet-500 uppercase">
+              For owners
+            </span>
+            <span className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-black text-gray-900 leading-tight">
+                Your idle gear is<br />
+                <span className="text-violet-600">earning $0 right now.</span>
+              </h2>
+              <p className="text-gray-500 text-sm mt-3 max-w-lg leading-relaxed">
+                Thousands of students on campus need things for just a few days — and they'd rather rent from a fellow student than buy. List once, earn every rental.
+              </p>
+            </div>
+            <Link
+              href={isLoggedIn ? '/new' : '/login?next=/new'}
+              className="shrink-0 px-6 py-3 bg-violet-600 text-white text-sm font-semibold rounded-xl hover:bg-violet-700 transition-colors shadow-lg shadow-violet-200 text-center"
+            >
+              List your first item →
+            </Link>
+          </div>
+
+          {/* Earnings examples by category */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+            {[
+              {
+                category: 'Sports & Outdoor',
+                color: 'green',
+                items: [
+                  { name: 'Badminton Racket Set', price: '$8', monthly: '$48' },
+                  { name: 'Camping Tent', price: '$15', monthly: '$75' },
+                  { name: 'Foldable Bicycle', price: '$20', monthly: '$100' },
+                ],
+              },
+              {
+                category: 'Study & Academic',
+                color: 'blue',
+                items: [
+                  { name: 'Graphics Calculator', price: '$5', monthly: '$30' },
+                  { name: 'Drawing Tablet', price: '$15', monthly: '$60' },
+                  { name: 'Portable Projector', price: '$20', monthly: '$80' },
+                ],
+              },
+              {
+                category: 'Tech & Office',
+                color: 'violet',
+                items: [
+                  { name: 'Mechanical Keyboard', price: '$10', monthly: '$50' },
+                  { name: 'iPad / Tablet', price: '$18', monthly: '$90' },
+                  { name: 'DSLR Camera', price: '$25', monthly: '$150' },
+                ],
+              },
+              {
+                category: 'Hobbies & Lifestyle',
+                color: 'amber',
+                items: [
+                  { name: 'Guitar / Ukulele', price: '$10', monthly: '$50' },
+                  { name: 'Formal Suit / Dress', price: '$18', monthly: '$72' },
+                  { name: 'Drone', price: '$35', monthly: '$175' },
+                ],
+              },
+            ].map(({ category, color, items }) => (
+              <div key={category} className="bg-white rounded-2xl border border-gray-200 p-4">
+                <p className={`text-xs font-bold tracking-wide uppercase mb-3 ${
+                  color === 'green' ? 'text-green-600' :
+                  color === 'blue' ? 'text-blue-600' :
+                  color === 'violet' ? 'text-violet-600' :
+                  'text-amber-600'
+                }`}>{category}</p>
+                <div className="space-y-2.5">
+                  {items.map(({ name, price, monthly }) => (
+                    <div key={name} className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-gray-600 leading-tight">{name}</span>
+                      <div className="text-right shrink-0">
+                        <span className="text-xs text-gray-400">{price}/day</span>
+                        <span className="text-xs font-bold text-violet-600 ml-1.5">→ {monthly}/mo</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Owner trust signals */}
+          <div className="bg-white rounded-2xl border border-gray-200 p-6">
+            <p className="text-xs font-semibold tracking-widest text-gray-400 uppercase mb-4">How your item stays safe</p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg className="w-4 h-4 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">University email verified</p>
+                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">Every renter is a verified student at NUS, NTU, SMU or other Singapore universities — not a random stranger.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg className="w-4 h-4 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.069A1 1 0 0121 8.82V15a1 1 0 01-1.447.894L15 14m0-4v4m0-4l-6-3m6 7l-6 3m0 0V7m0 7L3 11" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">CCTV handover on campus</p>
+                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">All handovers happen at campus CCTV locations — library, SSC, or faculty lobby. Both parties show student ID.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center shrink-0 mt-0.5">
+                  <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">You stay in control</p>
+                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">You approve every booking before it's confirmed. Set your own price, block out dates, and cancel anytime.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── Trust bar ─────────────────────────────────────────────────── */}
       <section className="bg-gray-50 border-b border-gray-100">
         <div className="max-w-6xl mx-auto px-4 py-10">

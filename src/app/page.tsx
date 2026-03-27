@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { createServerClient } from '@/lib/supabase-server'
+import { createServerClient, createAdminClient } from '@/lib/supabase-server'
 import ListingsGrid from './ListingsGrid'
 import Landing from './Landing'
 import Header from '@/components/Header'
@@ -8,6 +8,7 @@ export const dynamic = 'force-dynamic'
 
 export default async function HomePage() {
   const supabase = await createServerClient()
+  const admin = createAdminClient()
 
   const [{ data: listings, error }, { data: { user } }, { count: listingCount }, { count: studentCount }] = await Promise.all([
     supabase
@@ -17,7 +18,7 @@ export default async function HomePage() {
       .order('id', { ascending: false }),
     supabase.auth.getUser(),
     supabase.from('listings').select('*', { count: 'exact', head: true }),
-    supabase.from('profiles').select('*', { count: 'exact', head: true }),
+    admin.from('profiles').select('*', { count: 'exact', head: true }),
   ])
 
   const listingData = (listings ?? []).map((l) => {
