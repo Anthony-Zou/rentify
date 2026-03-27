@@ -1,6 +1,14 @@
 import Link from 'next/link'
 
-export default function Landing({ isLoggedIn = false }: { isLoggedIn?: boolean }) {
+export default function Landing({
+  isLoggedIn = false,
+  listingCount = 0,
+  studentCount = 0,
+}: {
+  isLoggedIn?: boolean
+  listingCount?: number
+  studentCount?: number
+}) {
   return (
     <div>
       {/* ── Hero ──────────────────────────────────────────────────────── */}
@@ -46,6 +54,28 @@ export default function Landing({ isLoggedIn = false }: { isLoggedIn?: boolean }
               <p className="mt-4 text-xs text-gray-400">
                 University email required (.edu.sg or .edu)
               </p>
+            )}
+
+            {/* Live stats */}
+            {(listingCount > 0 || studentCount > 0) && (
+              <div className="flex flex-wrap gap-6 mt-8">
+                {listingCount > 0 && (
+                  <div>
+                    <p className="text-2xl font-black text-gray-900">{listingCount}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">items listed</p>
+                  </div>
+                )}
+                {studentCount > 0 && (
+                  <div>
+                    <p className="text-2xl font-black text-gray-900">{studentCount}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">students joined</p>
+                  </div>
+                )}
+                <div>
+                  <p className="text-2xl font-black text-gray-900">5+</p>
+                  <p className="text-xs text-gray-400 mt-0.5">universities</p>
+                </div>
+              </div>
             )}
           </div>
         </div>

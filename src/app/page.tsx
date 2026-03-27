@@ -9,13 +9,15 @@ export const dynamic = 'force-dynamic'
 export default async function HomePage() {
   const supabase = await createServerClient()
 
-  const [{ data: listings, error }, { data: { user } }] = await Promise.all([
+  const [{ data: listings, error }, { data: { user } }, { count: listingCount }, { count: studentCount }] = await Promise.all([
     supabase
       .from('listings')
       .select('id, title, daily_price, image_url, is_available, category, profiles!owner_id(university_name)')
       .order('is_available', { ascending: false })
       .order('id', { ascending: false }),
     supabase.auth.getUser(),
+    supabase.from('listings').select('*', { count: 'exact', head: true }),
+    supabase.from('profiles').select('*', { count: 'exact', head: true }),
   ])
 
   const listingData = (listings ?? []).map((l) => {
@@ -54,7 +56,7 @@ export default async function HomePage() {
         </div>
       )}
 
-      <Landing isLoggedIn={!!user} />
+      <Landing isLoggedIn={!!user} listingCount={listingCount ?? 0} studentCount={studentCount ?? 0} />
 
       {error ? (
         <main className="max-w-6xl mx-auto px-4 py-10">
