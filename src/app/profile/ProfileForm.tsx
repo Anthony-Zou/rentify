@@ -4,22 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
-const DOMAIN_MAP: Record<string, string> = {
-  'u.nus.edu': 'NUS — National University of Singapore',
-  'nus.edu.sg': 'NUS — National University of Singapore',
-  'e.ntu.edu.sg': 'NTU — Nanyang Technological University',
-  'ntu.edu.sg': 'NTU — Nanyang Technological University',
-  'smu.edu.sg': 'SMU — Singapore Management University',
-  'mymail.sutd.edu.sg': 'SUTD — Singapore University of Technology and Design',
-  'sutd.edu.sg': 'SUTD — Singapore University of Technology and Design',
-  'singaporetech.edu.sg': 'SIT — Singapore Institute of Technology',
-  'suss.edu.sg': 'SUSS — Singapore University of Social Sciences',
-}
-
-function detectUniversity(email: string): string {
-  const domain = email.split('@')[1]?.toLowerCase() ?? ''
-  return DOMAIN_MAP[domain] ?? ''
-}
+import { detectUniversity } from '@/lib/rental-utils'
 
 type Props = {
   userId: string

@@ -2,18 +2,7 @@
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
-
-type BlockedRange = { start_date: string; end_date: string }
-
-function findOverlap(start: string, end: string, ranges: BlockedRange[]): BlockedRange | undefined {
-  return ranges.find((r) => start <= r.end_date && end >= r.start_date)
-}
-
-function calcDays(start: string, end: string): number {
-  if (!start || !end) return 0
-  const diff = new Date(end).getTime() - new Date(start).getTime()
-  return Math.max(0, Math.round(diff / 86400000) + 1)
-}
+import { calcDays, findOverlap, type BlockedRange } from '@/lib/rental-utils'
 
 export default function RequestForm({
   listingId,

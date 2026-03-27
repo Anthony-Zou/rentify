@@ -26,11 +26,9 @@ export default function RequestActions({ requests: initial }: { requests: Rental
     const supabase = createClient()
     const { error: rpcError } = await supabase.rpc('accept_rental_request', { request_id: id })
     if (!rpcError) {
-      // Auto-mark listing as unavailable
+      // Dates are blocked via the calendar (accepted rental_requests),
+      // so we do NOT set is_available=false — other date ranges remain rentable.
       const accepted = requests.find((r) => r.id === id)
-      if (accepted) {
-        await supabase.from('listings').update({ is_available: false }).eq('id', accepted.listing_id)
-      }
       setRequests((prev) =>
         prev.filter((r) => {
           if (r.id === id) return false
