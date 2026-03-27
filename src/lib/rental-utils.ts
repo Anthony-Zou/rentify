@@ -22,15 +22,15 @@ export function findOverlap(
 }
 
 export const UNIVERSITY_DOMAIN_MAP: Record<string, string> = {
-  'u.nus.edu': 'NUS — National University of Singapore',
-  'nus.edu.sg': 'NUS — National University of Singapore',
-  'e.ntu.edu.sg': 'NTU — Nanyang Technological University',
-  'ntu.edu.sg': 'NTU — Nanyang Technological University',
-  'smu.edu.sg': 'SMU — Singapore Management University',
-  'mymail.sutd.edu.sg': 'SUTD — Singapore University of Technology and Design',
-  'sutd.edu.sg': 'SUTD — Singapore University of Technology and Design',
-  'singaporetech.edu.sg': 'SIT — Singapore Institute of Technology',
-  'suss.edu.sg': 'SUSS — Singapore University of Social Sciences',
+  'u.nus.edu': 'NUS',
+  'nus.edu.sg': 'NUS',
+  'e.ntu.edu.sg': 'NTU',
+  'ntu.edu.sg': 'NTU',
+  'smu.edu.sg': 'SMU',
+  'mymail.sutd.edu.sg': 'SUTD',
+  'sutd.edu.sg': 'SUTD',
+  'singaporetech.edu.sg': 'SIT',
+  'suss.edu.sg': 'SUSS',
 }
 
 /**

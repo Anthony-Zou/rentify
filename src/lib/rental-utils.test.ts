@@ -63,31 +63,31 @@ describe('findOverlap', () => {
 
 describe('detectUniversity', () => {
   it('detects NUS from u.nus.edu domain', () => {
-    expect(detectUniversity('student@u.nus.edu')).toBe('NUS — National University of Singapore')
+    expect(detectUniversity('student@u.nus.edu')).toBe('NUS')
   })
 
   it('detects NUS from nus.edu.sg domain', () => {
-    expect(detectUniversity('admin@nus.edu.sg')).toBe('NUS — National University of Singapore')
+    expect(detectUniversity('admin@nus.edu.sg')).toBe('NUS')
   })
 
   it('detects NTU from e.ntu.edu.sg domain', () => {
-    expect(detectUniversity('student@e.ntu.edu.sg')).toBe('NTU — Nanyang Technological University')
+    expect(detectUniversity('student@e.ntu.edu.sg')).toBe('NTU')
   })
 
   it('detects SMU from smu.edu.sg domain', () => {
-    expect(detectUniversity('student@smu.edu.sg')).toBe('SMU — Singapore Management University')
+    expect(detectUniversity('student@smu.edu.sg')).toBe('SMU')
   })
 
   it('detects SUTD from sutd.edu.sg domain', () => {
-    expect(detectUniversity('student@sutd.edu.sg')).toBe('SUTD — Singapore University of Technology and Design')
+    expect(detectUniversity('student@sutd.edu.sg')).toBe('SUTD')
   })
 
   it('detects SIT from singaporetech.edu.sg domain', () => {
-    expect(detectUniversity('student@singaporetech.edu.sg')).toBe('SIT — Singapore Institute of Technology')
+    expect(detectUniversity('student@singaporetech.edu.sg')).toBe('SIT')
   })
 
   it('detects SUSS from suss.edu.sg domain', () => {
-    expect(detectUniversity('student@suss.edu.sg')).toBe('SUSS — Singapore University of Social Sciences')
+    expect(detectUniversity('student@suss.edu.sg')).toBe('SUSS')
   })
 
   it('returns empty string for unknown domain', () => {
@@ -96,7 +96,7 @@ describe('detectUniversity', () => {
   })
 
   it('is case-insensitive for domain part', () => {
-    expect(detectUniversity('student@E.NTU.EDU.SG')).toBe('NTU — Nanyang Technological University')
+    expect(detectUniversity('student@E.NTU.EDU.SG')).toBe('NTU')
   })
 
   it('returns empty string for email with no domain', () => {
