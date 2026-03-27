@@ -48,16 +48,20 @@ export default function LoginPage() {
       token: code,
       type: 'email',
     })
+
+    // verifyOtp can return an error even when auth succeeds (e.g. token already consumed
+    // but session was established). Always check actual auth state before showing error.
+    const { data: { user } } = await supabase.auth.getUser()
     setLoading(false)
 
-    if (verifyError) {
-      setError(verifyError.message)
-    } else {
+    if (user) {
       // Track login server-side (update email, login_count, last_login_at)
       await fetch('/api/track-login', { method: 'POST' })
       const next = new URLSearchParams(window.location.search).get('next') ?? '/'
       router.push(next)
       router.refresh()
+    } else {
+      setError(verifyError?.message ?? 'Invalid code. Please try again.')
     }
   }
 

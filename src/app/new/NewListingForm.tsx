@@ -67,6 +67,7 @@ export default function NewListingForm({ userId }: { userId: string }) {
 
       if (insertError) throw new Error(insertError.message)
 
+      router.refresh()
       router.push(`/listings/${data.id}`)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.')
