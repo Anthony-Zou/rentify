@@ -13,9 +13,9 @@ export default async function HomePage() {
   const [{ data: listings, error }, { data: { user } }, { count: listingCount }, { count: studentCount }] = await Promise.all([
     supabase
       .from('listings')
-      .select('id, title, daily_price, image_url, is_available, category, profiles!owner_id(university_name)')
+      .select('id, title, daily_price, image_url, is_available, category, owner_id, created_at, profiles!owner_id(university_name)')
       .order('is_available', { ascending: false })
-      .order('id', { ascending: false }),
+      .order('created_at', { ascending: false }),
     supabase.auth.getUser(),
     supabase.from('listings').select('*', { count: 'exact', head: true }),
     admin.from('profiles').select('*', { count: 'exact', head: true }),
@@ -23,7 +23,7 @@ export default async function HomePage() {
 
   const listingData = (listings ?? []).map((l) => {
     const raw = (l.profiles as unknown as { university_name: string | null }[] | null)?.[0]?.university_name ?? null
-    return { ...l, owner_university: raw ? raw.split('—')[0].trim() : null }
+    return { ...l, owner_university: raw ? raw.split('—')[0].trim() : null, owner_id: l.owner_id, created_at: l.created_at }
   })
 
   let profileIncomplete = false
@@ -59,6 +59,7 @@ export default async function HomePage() {
 
       <Landing isLoggedIn={!!user} listingCount={listingCount ?? 0} studentCount={studentCount ?? 0} />
 
+
       {error ? (
         <main className="max-w-6xl mx-auto px-4 py-10">
           <p className="text-red-500 text-sm">Failed to load listings. Please try again later.</p>
@@ -73,7 +74,7 @@ export default async function HomePage() {
               </a>
             )}
           </div>
-          <ListingsGrid listings={listingData} />
+          <ListingsGrid listings={listingData} userId={user?.id ?? null} />
         </section>
       )}
     </div>

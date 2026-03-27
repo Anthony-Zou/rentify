@@ -6,6 +6,13 @@ import Image from 'next/image'
 import AIComingSoon from '@/components/AIComingSoon'
 
 const CATEGORIES = ['All', 'Cameras', 'Gaming', 'Audio', 'Sports', 'Electronics', 'Other']
+const DATE_OPTIONS = [
+  { label: 'Any time', value: 0 },
+  { label: 'Past 1 day', value: 1 },
+  { label: 'Past 3 days', value: 3 },
+  { label: 'Past 5 days', value: 5 },
+  { label: 'Past 7 days', value: 7 },
+]
 
 type Listing = {
   id: string
@@ -15,40 +22,86 @@ type Listing = {
   is_available: boolean
   category: string
   owner_university: string | null
+  owner_id: string
+  created_at: string
 }
 
-export default function ListingsGrid({ listings }: { listings: Listing[] }) {
+export default function ListingsGrid({ listings, userId }: { listings: Listing[], userId?: string | null }) {
   const [search, setSearch] = useState('')
   const [category, setCategory] = useState('All')
   const [school, setSchool] = useState('All')
+  const [days, setDays] = useState(0)
+  const [hideOwn, setHideOwn] = useState(false)
 
-  // Derive unique school list from listings
   const schools = useMemo(() => {
     const names = listings.map((l) => l.owner_university).filter(Boolean) as string[]
     return ['All', ...Array.from(new Set(names)).sort()]
   }, [listings])
 
   const filtered = useMemo(() => {
+    const cutoff = days > 0 ? new Date(Date.now() - days * 86400_000) : null
     return listings.filter((l) => {
-      const matchesSearch = l.title.toLowerCase().includes(search.toLowerCase())
-      const matchesCategory = category === 'All' || l.category === category
-      const matchesSchool = school === 'All' || l.owner_university === school
-      return matchesSearch && matchesCategory && matchesSchool
+      if (hideOwn && userId && l.owner_id === userId) return false
+      if (cutoff && new Date(l.created_at) < cutoff) return false
+      if (!l.title.toLowerCase().includes(search.toLowerCase())) return false
+      if (category !== 'All' && l.category !== category) return false
+      if (school !== 'All' && l.owner_university !== school) return false
+      return true
     })
-  }, [listings, search, category, school])
+  }, [listings, search, category, school, days, hideOwn, userId])
 
   return (
     <div>
       {/* Search + filter bar */}
       <div className="flex flex-col gap-3 mb-6">
-        <div className="flex flex-col sm:flex-row gap-3">
+        {/* Row 1: search + dropdowns */}
+        <div className="flex flex-wrap gap-2">
           <input
             type="text"
             placeholder="Search items…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full sm:max-w-xs px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white"
+            className="w-full sm:w-48 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white"
           />
+
+          {/* School dropdown */}
+          <select
+            value={school}
+            onChange={(e) => setSchool(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+          >
+            <option value="All">🎓 All schools</option>
+            {schools.filter((s) => s !== 'All').map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+
+          {/* Posted date dropdown */}
+          <select
+            value={days}
+            onChange={(e) => setDays(Number(e.target.value))}
+            className="px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+          >
+            {DATE_OPTIONS.map(({ label, value }) => (
+              <option key={value} value={value}>{label}</option>
+            ))}
+          </select>
+
+          {/* Hide my items toggle — only shown when logged in */}
+          {userId && (
+            <button
+              type="button"
+              onClick={() => setHideOwn(!hideOwn)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-xs font-semibold transition-colors ${
+                hideOwn
+                  ? 'bg-gray-800 text-white border-gray-800'
+                  : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
+              }`}
+            >
+              {hideOwn ? '👁 Showing others only' : 'Hide my items'}
+            </button>
+          )}
+
           <AIComingSoon
             label="Smart search"
             description="Describe what you need in plain English — e.g. 'something to film a short movie this weekend' — and AI will find the right items for you."
@@ -62,7 +115,7 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
           </AIComingSoon>
         </div>
 
-        {/* Category pills */}
+        {/* Row 2: category pills */}
         <div className="flex flex-wrap gap-2">
           {CATEGORIES.map((c) => (
             <button
@@ -78,25 +131,6 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
             </button>
           ))}
         </div>
-
-        {/* School pills — only shown when at least one school is known */}
-        {schools.length > 1 && (
-          <div className="flex flex-wrap gap-2">
-            {schools.map((s) => (
-              <button
-                key={s}
-                onClick={() => setSchool(s)}
-                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-colors ${
-                  school === s
-                    ? 'bg-gray-800 text-white'
-                    : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50'
-                }`}
-              >
-                {s === 'All' ? '🎓 All schools' : s}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Empty state */}
