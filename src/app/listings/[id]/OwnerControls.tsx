@@ -14,25 +14,32 @@ export default function OwnerControls({ listingId, isAvailable: initial }: Props
   const router = useRouter()
   const [isAvailable, setIsAvailable] = useState(initial)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function toggleAvailability() {
     setLoading(true)
+    setError(null)
     const supabase = createClient()
-    const { error } = await supabase
+    const { error: toggleError } = await supabase
       .from('listings')
       .update({ is_available: !isAvailable })
       .eq('id', listingId)
 
-    if (!error) {
+    if (!toggleError) {
       setIsAvailable(!isAvailable)
       router.refresh()
+    } else {
+      setError('Failed to update. Please try again.')
     }
     setLoading(false)
   }
 
   return (
     <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6 flex items-center justify-between gap-4 flex-wrap">
-      <p className="text-sm font-medium text-amber-800">Your listing</p>
+      <div>
+        <p className="text-sm font-medium text-amber-800">Your listing</p>
+        {error && <p className="text-xs text-red-500 mt-0.5">{error}</p>}
+      </div>
       <div className="flex items-center gap-2">
         <button
           onClick={toggleAvailability}

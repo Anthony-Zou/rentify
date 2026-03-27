@@ -50,6 +50,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
       setDeleting(false)
       return
     }
+    router.refresh()
     router.push('/profile')
   }
 

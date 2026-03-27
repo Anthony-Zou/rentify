@@ -18,19 +18,23 @@ export default function MyListings({ listings: initial }: { listings: Listing[] 
   const [listings, setListings] = useState(initial)
   const [toggling, setToggling] = useState<string | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   async function toggleAvailability(id: string, current: boolean) {
     setToggling(id)
+    setError(null)
     const supabase = createClient()
-    const { error } = await supabase
+    const { error: toggleError } = await supabase
       .from('listings')
       .update({ is_available: !current })
       .eq('id', id)
 
-    if (!error) {
+    if (!toggleError) {
       setListings((prev) =>
         prev.map((l) => (l.id === id ? { ...l, is_available: !current } : l))
       )
+    } else {
+      setError('Failed to update availability. Please try again.')
     }
     setToggling(null)
   }
@@ -38,6 +42,7 @@ export default function MyListings({ listings: initial }: { listings: Listing[] 
   async function deleteListing(id: string) {
     if (!confirm('Delete this listing? This cannot be undone.')) return
     setDeleting(id)
+    setError(null)
     const supabase = createClient()
 
     // Delete image from storage first
@@ -47,11 +52,13 @@ export default function MyListings({ listings: initial }: { listings: Listing[] 
       if (oldPath) await supabase.storage.from('listing-image').remove([decodeURIComponent(oldPath)])
     }
 
-    const { data: deleted, error } = await supabase.from('listings').delete().eq('id', id).select('id')
-    if (!error && deleted && deleted.length > 0) {
+    const { data: deleted, error: deleteError } = await supabase.from('listings').delete().eq('id', id).select('id')
+    if (deleteError) {
+      setError('Failed to delete listing. Please try again.')
+    } else if (!deleted || deleted.length === 0) {
+      setError('Delete failed — you may not have permission.')
+    } else {
       setListings((prev) => prev.filter((l) => l.id !== id))
-    } else if (!error) {
-      alert('Delete failed — you may not have permission. Check Supabase RLS policies.')
     }
     setDeleting(null)
   }
@@ -72,6 +79,7 @@ export default function MyListings({ listings: initial }: { listings: Listing[] 
 
   return (
     <div className="space-y-3">
+      {error && <p className="text-sm text-red-500 px-1">{error}</p>}
       {listings.map((listing) => (
         <div
           key={listing.id}

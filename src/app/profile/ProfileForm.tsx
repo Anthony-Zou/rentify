@@ -49,7 +49,7 @@ export default function ProfileForm({ userId, userEmail, initialFullName, initia
       setTimeout(() => setSaved(false), 3000)
       // Redirect back if came from posting flow
       const next = new URLSearchParams(window.location.search).get('next')
-      if (next) router.push(next)
+      if (next) { router.refresh(); router.push(next) }
     }
   }
 

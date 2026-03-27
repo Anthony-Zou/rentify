@@ -45,12 +45,17 @@ export default function RequestActions({ requests: initial }: { requests: Rental
 
   async function handleDecline(id: string) {
     setProcessing(id)
+    setError(null)
     const supabase = createClient()
     const { error } = await supabase
       .from('rental_requests')
       .update({ status: 'declined' })
       .eq('id', id)
-    if (!error) setRequests((prev) => prev.filter((r) => r.id !== id))
+    if (!error) {
+      setRequests((prev) => prev.filter((r) => r.id !== id))
+    } else {
+      setError('Failed to decline request. Please try again.')
+    }
     setProcessing(null)
   }
 
