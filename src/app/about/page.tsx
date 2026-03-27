@@ -30,10 +30,10 @@ const team = [
     initial: 'A',
     name: 'Anthony',
     role: 'Co-Founder & CTO',
-    school: 'NUS — MSc Digital Financial Technology',
-    bio: 'Software Engineer @ Visa · A*STAR ML Research · Huawei Cloud · LLM & AI expertise.',
-    highlight: 'Owns all engineering, product architecture, and third-party integrations.',
-    star: 'Visa: tools adopted by 15+ teams · 80% MTTR reduction',
+    school: 'NTU — BEng Computer Science · NUS — MSc Digital Financial Technology',
+    bio: 'AI Engineer specialising in LLM systems, RAG pipelines, and full-stack delivery. Currently at Visa Singapore. Previously A*STAR ML research and Huawei Cloud.',
+    highlight: 'Builds and owns all of Borlo\'s engineering, product architecture, and AI systems.',
+    star: '1st Place Hack For Cities 2023 · 1st Runner-Up HPCIC23 AI Challenge',
   },
 ]
 
