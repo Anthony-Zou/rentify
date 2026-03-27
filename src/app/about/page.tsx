@@ -7,6 +7,43 @@ export const metadata = {
   description: 'Meet the team behind Borlo, the university-first P2P rental marketplace for students in Singapore.',
 }
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'About Borlo',
+  url: 'https://www.borlo.app/about',
+  mainEntity: {
+    '@type': 'Organization',
+    name: 'Borlo',
+    url: 'https://www.borlo.app',
+    foundingDate: '2025',
+    foundingLocation: 'Singapore',
+    member: [
+      {
+        '@type': 'Person',
+        name: 'Justin',
+        jobTitle: 'Co-Founder & CEO',
+        alumniOf: 'National University of Singapore',
+      },
+      {
+        '@type': 'Person',
+        name: 'Kenneth',
+        jobTitle: 'Co-Founder & CFO',
+        alumniOf: 'National University of Singapore',
+      },
+      {
+        '@type': 'Person',
+        name: 'Anthony',
+        jobTitle: 'Co-Founder & CTO',
+        alumniOf: [
+          'Nanyang Technological University',
+          'National University of Singapore',
+        ],
+      },
+    ],
+  },
+}
+
 const team = [
   {
     initial: 'J',
@@ -43,6 +80,10 @@ export default async function AboutPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header user={user} />
 
       <main className="max-w-3xl mx-auto px-4 py-12">

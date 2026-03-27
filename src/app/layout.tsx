@@ -34,6 +34,32 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      name: 'Borlo',
+      url: 'https://www.borlo.app',
+      description: 'University-first peer-to-peer rental marketplace for Singapore students. Rent cameras, suits, gaming consoles and more from fellow students.',
+    },
+    {
+      '@type': 'Organization',
+      name: 'Borlo',
+      url: 'https://www.borlo.app',
+      email: 'hello@borlo.app',
+      foundingDate: '2025',
+      foundingLocation: 'Singapore',
+      description: 'P2P rental marketplace for university students in Singapore.',
+      member: [
+        { '@type': 'Person', name: 'Justin', jobTitle: 'Co-Founder & CEO' },
+        { '@type': 'Person', name: 'Kenneth', jobTitle: 'Co-Founder & CFO' },
+        { '@type': 'Person', name: 'Anthony', jobTitle: 'Co-Founder & CTO' },
+      ],
+    },
+  ],
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -47,6 +73,10 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#7c3aed" />
         <meta name="mobile-web-app-capable" content="yes" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         {children}
