@@ -90,6 +90,26 @@ describe('detectUniversity', () => {
     expect(detectUniversity('student@suss.edu.sg')).toBe('SUSS')
   })
 
+  it('detects Ngee Ann Polytechnic', () => {
+    expect(detectUniversity('student@connect.np.edu.sg')).toBe('Ngee Ann Poly')
+  })
+
+  it('detects Singapore Polytechnic', () => {
+    expect(detectUniversity('student@ichat.sp.edu.sg')).toBe('Singapore Poly')
+  })
+
+  it('detects Temasek Polytechnic', () => {
+    expect(detectUniversity('student@tp.edu.sg')).toBe('Temasek Poly')
+  })
+
+  it('detects Nanyang Polytechnic', () => {
+    expect(detectUniversity('student@nyp.edu.sg')).toBe('Nanyang Poly')
+  })
+
+  it('detects Republic Polytechnic', () => {
+    expect(detectUniversity('student@rp.edu.sg')).toBe('Republic Poly')
+  })
+
   it('returns empty string for unknown domain', () => {
     expect(detectUniversity('user@gmail.com')).toBe('')
     expect(detectUniversity('user@harvard.edu')).toBe('')

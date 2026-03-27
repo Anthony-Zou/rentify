@@ -22,6 +22,7 @@ export function findOverlap(
 }
 
 export const UNIVERSITY_DOMAIN_MAP: Record<string, string> = {
+  // Universities
   'u.nus.edu': 'NUS',
   'nus.edu.sg': 'NUS',
   'e.ntu.edu.sg': 'NTU',
@@ -31,6 +32,12 @@ export const UNIVERSITY_DOMAIN_MAP: Record<string, string> = {
   'sutd.edu.sg': 'SUTD',
   'singaporetech.edu.sg': 'SIT',
   'suss.edu.sg': 'SUSS',
+  // Polytechnics
+  'connect.np.edu.sg': 'Ngee Ann Poly',
+  'ichat.sp.edu.sg': 'Singapore Poly',
+  'tp.edu.sg': 'Temasek Poly',
+  'nyp.edu.sg': 'Nanyang Poly',
+  'rp.edu.sg': 'Republic Poly',
 }
 
 /**
