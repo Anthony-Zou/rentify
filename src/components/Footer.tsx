@@ -14,6 +14,9 @@ export default function Footer() {
           {/* Bottom row — links + team + copyright */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-4">
+              <Link href="/about" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
+                About
+              </Link>
               <Link href="/privacy" className="text-xs text-gray-400 hover:text-gray-600 transition-colors">
                 Privacy Policy
               </Link>
