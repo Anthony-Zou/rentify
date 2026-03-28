@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 
@@ -24,6 +24,14 @@ export default function ProfileForm({ userId, userEmail, initialFullName, initia
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
+
+  // Refresh when user returns from Telegram (to show Connected badge)
+  useEffect(() => {
+    if (telegramConnected) return
+    function onFocus() { router.refresh() }
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [telegramConnected, router])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
