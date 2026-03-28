@@ -34,8 +34,8 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
     setDeleting(true)
     const supabase = createClient()
 
-    if (listing.image_url) {
-      const oldPath = listing.image_url.split('/object/public/listing-image/')[1]
+    if (listing?.image_url) {
+      const oldPath = listing.image_url?.split('/object/public/listing-image/')[1]
       if (oldPath) await supabase.storage.from('listing-image').remove([decodeURIComponent(oldPath)])
     }
 
@@ -67,6 +67,9 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
     setLoading(true)
 
     try {
+      const price = parseFloat(dailyPrice)
+      if (isNaN(price) || price <= 0) throw new Error('Please enter a valid daily price greater than $0.')
+
       const supabase = createClient()
       let imageUrl = listing.image_url
 
@@ -95,7 +98,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
         .update({
           title,
           description: description || null,
-          daily_price: parseFloat(dailyPrice),
+          daily_price: price,
           image_url: imageUrl,
           category,
         })
@@ -103,8 +106,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
         .select('id')
         .single()
 
-      if (updateError) throw new Error(updateError.message)
-      if (!updated) throw new Error('Update failed — check that you have permission to edit this listing.')
+      if (updateError || !updated) throw new Error('Failed to update listing. Please try again.')
 
       router.push(`/listings/${listing.id}`)
       router.refresh()

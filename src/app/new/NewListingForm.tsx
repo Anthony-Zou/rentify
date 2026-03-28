@@ -31,6 +31,9 @@ export default function NewListingForm({ userId }: { userId: string }) {
     setLoading(true)
 
     try {
+      const price = parseFloat(dailyPrice)
+      if (isNaN(price) || price <= 0) throw new Error('Please enter a valid daily price greater than $0.')
+
       const supabase = createClient()
 
       // Ensure a profile row exists before inserting listing (FK constraint)
@@ -40,6 +43,7 @@ export default function NewListingForm({ userId }: { userId: string }) {
 
       if (imageFile) {
         const ext = imageFile.name.split('.').pop()
+        if (!ext || ext.length === 0) throw new Error('File must have a valid extension')
         const filename = `${userId}/${Date.now()}.${ext}`
         const { error: uploadError } = await supabase.storage
           .from('listing-image')
@@ -58,7 +62,7 @@ export default function NewListingForm({ userId }: { userId: string }) {
           owner_id: userId,
           title,
           description: description || null,
-          daily_price: parseFloat(dailyPrice),
+          daily_price: price,
           image_url: imageUrl,
           category,
         })

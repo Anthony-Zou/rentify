@@ -22,9 +22,28 @@ export default async function HomePage() {
   ])
 
   const listingData = (listings ?? []).map((l) => {
-    const raw = (l.profiles as unknown as { university_name: string | null }[] | null)?.[0]?.university_name ?? null
-    return { ...l, owner_university: raw ? raw.split('—')[0].trim() : null, owner_id: l.owner_id, created_at: l.created_at }
+    const profileData = Array.isArray(l.profiles) ? l.profiles[0] : l.profiles
+    const raw = (profileData as any)?.university_name ?? null
+    const university = raw && typeof raw === 'string' ? raw.split('—')[0].trim() : raw
+    return { ...l, owner_university: university, owner_id: l.owner_id, created_at: l.created_at }
   })
+
+  // Fallback: listings missing university_name (e.g. seed data) — fetch via admin
+  const missingOwnerIds = Array.from(new Set(
+    listingData.filter(l => !l.owner_university).map(l => l.owner_id)
+  ))
+  if (missingOwnerIds.length > 0) {
+    const { data: ownerProfiles } = await admin
+      .from('profiles')
+      .select('id, university_name')
+      .in('id', missingOwnerIds)
+    if (ownerProfiles && ownerProfiles.length > 0) {
+      const uniMap = Object.fromEntries(ownerProfiles.map(p => [p.id, p.university_name]))
+      listingData.forEach(l => {
+        if (!l.owner_university && uniMap[l.owner_id]) l.owner_university = uniMap[l.owner_id]
+      })
+    }
+  }
 
   let profileIncomplete = false
   if (user) {

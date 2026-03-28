@@ -43,7 +43,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
     owner = ownerResult.data
     blockedRanges = blockedResult.data ?? []
   } catch {
-    // Admin key not configured — owner info unavailable
+    // Admin key not configured — owner info and calendar unavailable
   }
 
   let existingRequest: { id: string; status: string } | null = null

@@ -2,6 +2,7 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import type { NextRequest } from 'next/server'
+import { detectUniversity } from '@/lib/rental-utils'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -45,12 +46,15 @@ export async function GET(request: NextRequest) {
           console.error('[auth/callback] profile select error:', selectError)
         }
 
+        const university = detectUniversity(data.user.email || '')
+
         const { error: upsertError } = await supabase
           .from('profiles')
           .upsert(
             {
               id: data.user.id,
               email: data.user.email,
+              university_name: university,
               last_login_at: new Date().toISOString(),
               login_count: (profile?.login_count ?? 0) + 1,
             },

@@ -48,7 +48,7 @@ export default function MyListings({ listings: initial }: { listings: Listing[] 
     // Delete image from storage first
     const listing = listings.find((l) => l.id === id)
     if (listing?.image_url) {
-      const oldPath = listing.image_url.split('/object/public/listing-image/')[1]
+      const oldPath = listing.image_url?.split('/object/public/listing-image/')[1]
       if (oldPath) await supabase.storage.from('listing-image').remove([decodeURIComponent(oldPath)])
     }
 

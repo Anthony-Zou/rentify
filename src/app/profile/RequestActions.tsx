@@ -51,6 +51,7 @@ export default function RequestActions({ requests: initial }: { requests: Rental
       .from('rental_requests')
       .update({ status: 'declined' })
       .eq('id', id)
+      .eq('status', 'pending')
     if (!error) {
       setRequests((prev) => prev.filter((r) => r.id !== id))
     } else {

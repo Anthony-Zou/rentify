@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import AIComingSoon from '@/components/AIComingSoon'
+import { SCHOOLS_WITH_ALL } from '@/lib/schools'
 
 const CATEGORIES = ['All', 'Cameras', 'Gaming', 'Audio', 'Sports', 'Electronics', 'Other']
 const DATE_OPTIONS = [
@@ -33,10 +34,7 @@ export default function ListingsGrid({ listings, userId }: { listings: Listing[]
   const [days, setDays] = useState(0)
   const [hideOwn, setHideOwn] = useState(false)
 
-  const schools = useMemo(() => {
-    const names = listings.map((l) => l.owner_university).filter(Boolean) as string[]
-    return ['All', ...Array.from(new Set(names)).sort()]
-  }, [listings])
+  const schools = SCHOOLS_WITH_ALL
 
   const filtered = useMemo(() => {
     const cutoff = days > 0 ? new Date(Date.now() - days * 86400_000) : null

@@ -1,5 +1,6 @@
 import { createServerClient, createAdminClient } from '@/lib/supabase-server'
 import { NextResponse } from 'next/server'
+import { detectUniversity } from '@/lib/rental-utils'
 
 export async function POST() {
   // Use anon client to get the authenticated user
@@ -21,6 +22,7 @@ export async function POST() {
     .single()
 
   const newCount = (profile?.login_count ?? 0) + 1
+  const university = detectUniversity(user.email || '')
 
   const { error } = await admin
     .from('profiles')
@@ -28,6 +30,7 @@ export async function POST() {
       {
         id: user.id,
         email: user.email,
+        university_name: university,
         last_login_at: new Date().toISOString(),
         login_count: newCount,
       },

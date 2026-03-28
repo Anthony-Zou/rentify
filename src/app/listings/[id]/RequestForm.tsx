@@ -52,7 +52,7 @@ export default function RequestForm({
     })
 
     if (insertError) {
-      setError(insertError.message)
+      setError('Failed to send request. Please try again.')
       setLoading(false)
       return
     }
