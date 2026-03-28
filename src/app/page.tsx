@@ -38,7 +38,11 @@ export default async function HomePage() {
       .select('id, university_name')
       .in('id', missingOwnerIds)
     if (ownerProfiles && ownerProfiles.length > 0) {
-      const uniMap = Object.fromEntries(ownerProfiles.map(p => [p.id, p.university_name]))
+      const uniMap = Object.fromEntries(ownerProfiles.map(p => {
+        const raw = p.university_name
+        const uni = raw && typeof raw === 'string' ? raw.split('—')[0].trim() : raw
+        return [p.id, uni]
+      }))
       listingData.forEach(l => {
         if (!l.owner_university && uniMap[l.owner_id]) l.owner_university = uniMap[l.owner_id]
       })
