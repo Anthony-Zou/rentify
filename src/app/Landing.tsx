@@ -21,7 +21,7 @@ export default function Landing({
           <div className="max-w-2xl">
             <h1 className="text-4xl md:text-6xl font-black text-gray-900 leading-tight tracking-tight mb-6">
               Rent anything<br />
-              <span className="text-violet-600">from fellow students.</span>
+              <span className="text-violet-600">within your university community.</span>
             </h1>
             <p className="text-lg text-gray-500 leading-relaxed mb-10 max-w-xl">
               Camera for your grad shoot. Suit for your internship interview.
@@ -68,7 +68,7 @@ export default function Landing({
                 {studentCount > 0 && (
                   <div>
                     <p className="text-2xl font-black text-gray-900">{studentCount}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">students joined</p>
+                    <p className="text-xs text-gray-400 mt-0.5">members joined</p>
                   </div>
                 )}
                 <div>
@@ -156,7 +156,7 @@ export default function Landing({
                 <span className="text-violet-600">earning $0 right now.</span>
               </h2>
               <p className="text-gray-500 text-sm mt-3 max-w-lg leading-relaxed">
-                Thousands of students on campus need things for just a few days — and they'd rather rent from a fellow student than buy. List once, earn every rental.
+                Thousands of students and alumni need things for just a few days — and they'd rather rent from someone they can trust than buy. List once, earn every rental.
               </p>
             </div>
             <Link
@@ -241,7 +241,7 @@ export default function Landing({
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-900">University email verified</p>
-                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">Every renter is a verified student at NUS, NTU, SMU or other Singapore universities — not a random stranger.</p>
+                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">Every member is a verified student or alumni at NUS, NTU, SMU or other Singapore universities — not a random stranger.</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -252,7 +252,7 @@ export default function Landing({
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-900">CCTV handover on campus</p>
-                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">All handovers happen at campus CCTV locations — library, SSC, or faculty lobby. Both parties show student ID.</p>
+                  <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">All handovers happen at campus CCTV locations — library, SSC, or faculty lobby. Both parties verify identity at handover.</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
