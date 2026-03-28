@@ -76,7 +76,7 @@ export default function LoginPage() {
           <>
             <h1 className="text-xl font-semibold text-gray-900 mb-1">Sign in</h1>
             <p className="text-sm text-gray-500 mb-6">
-              University students only — use your university email (.edu.sg or .edu).
+              Open to students and alumni — use your university or alumni email (.edu.sg or .edu).
             </p>
 
             <form onSubmit={handleSendCode} className="space-y-4">

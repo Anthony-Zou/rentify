@@ -52,7 +52,7 @@ export default function Landing({
             </div>
             {!isLoggedIn && (
               <p className="mt-4 text-xs text-gray-400">
-                University email required (.edu.sg or .edu)
+                Open to students & alumni — university or alumni email required
               </p>
             )}
 

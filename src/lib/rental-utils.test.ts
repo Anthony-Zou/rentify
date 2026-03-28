@@ -110,6 +110,31 @@ describe('detectUniversity', () => {
     expect(detectUniversity('student@rp.edu.sg')).toBe('Republic Poly')
   })
 
+  // Alumni domains
+  it('detects NUS from alumni.nus.edu.sg domain', () => {
+    expect(detectUniversity('john@alumni.nus.edu.sg')).toBe('NUS')
+  })
+
+  it('detects NTU from alumni.ntu.edu.sg domain', () => {
+    expect(detectUniversity('john@alumni.ntu.edu.sg')).toBe('NTU')
+  })
+
+  it('detects SMU from alumni.smu.edu.sg domain', () => {
+    expect(detectUniversity('john@alumni.smu.edu.sg')).toBe('SMU')
+  })
+
+  it('detects SUTD from alumni.sutd.edu.sg domain', () => {
+    expect(detectUniversity('john@alumni.sutd.edu.sg')).toBe('SUTD')
+  })
+
+  it('detects SIT from alumni.singaporetech.edu.sg domain', () => {
+    expect(detectUniversity('john@alumni.singaporetech.edu.sg')).toBe('SIT')
+  })
+
+  it('detects SUSS from alumni.suss.edu.sg domain', () => {
+    expect(detectUniversity('john@alumni.suss.edu.sg')).toBe('SUSS')
+  })
+
   it('returns empty string for unknown domain', () => {
     expect(detectUniversity('user@gmail.com')).toBe('')
     expect(detectUniversity('user@harvard.edu')).toBe('')
