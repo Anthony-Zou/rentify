@@ -42,20 +42,28 @@ export default function RequestForm({
 
     setLoading(true)
     const supabase = createClient()
-    const { error: insertError } = await supabase.from('rental_requests').insert({
+    const { data: inserted, error: insertError } = await supabase.from('rental_requests').insert({
       listing_id: listingId,
       renter_id: renterId,
       owner_id: ownerId,
       start_date: startDate,
       end_date: endDate,
       message: message || null,
-    })
+    }).select('id').single()
+    const insertedId = inserted?.id
 
     if (insertError) {
       setError('Failed to send request. Please try again.')
       setLoading(false)
       return
     }
+
+    // Notify owner via Telegram (fire-and-forget)
+    fetch('/api/telegram/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type: 'new_request', requestId: insertedId }),
+    }).catch(() => {})
 
     setSubmitted(true)
   }

@@ -26,6 +26,11 @@ export default function RequestActions({ requests: initial }: { requests: Rental
     const supabase = createClient()
     const { error: rpcError } = await supabase.rpc('accept_rental_request', { request_id: id })
     if (!rpcError) {
+      fetch('/api/telegram/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'accepted', requestId: id }),
+      }).catch(() => {})
       // Dates are blocked via the calendar (accepted rental_requests),
       // so we do NOT set is_available=false — other date ranges remain rentable.
       const accepted = requests.find((r) => r.id === id)
@@ -53,6 +58,11 @@ export default function RequestActions({ requests: initial }: { requests: Rental
       .eq('id', id)
       .eq('status', 'pending')
     if (!error) {
+      fetch('/api/telegram/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: 'declined', requestId: id }),
+      }).catch(() => {})
       setRequests((prev) => prev.filter((r) => r.id !== id))
     } else {
       setError('Failed to decline request. Please try again.')

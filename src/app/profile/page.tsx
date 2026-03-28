@@ -20,7 +20,7 @@ export default async function ProfilePage() {
   const [profileResult, listingsResult] = await Promise.all([
     supabase
       .from('profiles')
-      .select('full_name, telegram_handle, university_name')
+      .select('full_name, telegram_handle, university_name, telegram_chat_id')
       .eq('id', user.id)
       .single(),
     supabase
@@ -106,6 +106,7 @@ export default async function ProfilePage() {
                   initialFullName={profile?.full_name ?? ''}
                   initialTelegram={profile?.telegram_handle ?? ''}
                   initialUniversity={profile?.university_name ?? ''}
+                  telegramConnected={!!profile?.telegram_chat_id}
                 />
               ),
             },

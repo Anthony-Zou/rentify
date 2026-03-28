@@ -12,9 +12,10 @@ type Props = {
   initialFullName: string
   initialTelegram: string
   initialUniversity: string
+  telegramConnected: boolean
 }
 
-export default function ProfileForm({ userId, userEmail, initialFullName, initialTelegram, initialUniversity }: Props) {
+export default function ProfileForm({ userId, userEmail, initialFullName, initialTelegram, initialUniversity, telegramConnected }: Props) {
   const [fullName, setFullName] = useState(initialFullName)
   const [telegram, setTelegram] = useState(initialTelegram)
   const detectedUniversity = detectUniversity(userEmail)
@@ -99,6 +100,30 @@ export default function ProfileForm({ userId, userEmail, initialFullName, initia
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
           />
         )}
+      </div>
+
+      {/* Telegram notifications */}
+      <div className="pt-1 border-t border-gray-100">
+        <label className="block text-sm font-medium text-gray-700 mb-2">Telegram notifications</label>
+        {telegramConnected ? (
+          <div className="flex items-center gap-2 text-sm text-green-700 bg-green-50 px-3 py-2 rounded-lg">
+            <span>✅</span>
+            <span>Connected — you'll get instant notifications via Bot</span>
+          </div>
+        ) : (
+          <a
+            href={`https://t.me/brolo_butler_bot?start=${userId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-[#229ED9] text-white text-sm font-semibold rounded-lg hover:bg-[#1a8bbf] transition-colors"
+          >
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.833.941z"/>
+            </svg>
+            Connect Telegram
+          </a>
+        )}
+        <p className="text-xs text-gray-400 mt-1.5">Get notified instantly when you receive or get a response to a rental request.</p>
       </div>
 
       {error && <p className="text-sm text-red-500">{error}</p>}

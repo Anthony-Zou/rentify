@@ -71,6 +71,20 @@ export default function NewListingForm({ userId }: { userId: string }) {
 
       if (insertError) throw new Error(insertError.message)
 
+      // Post to Telegram channel (fire-and-forget, don't block navigation)
+      fetch('/api/telegram/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'new_listing',
+          listingId: data.id,
+          title,
+          dailyPrice: price,
+          category,
+          school: null, // populated server-side from owner profile
+        }),
+      }).catch(() => {})
+
       router.refresh()
       router.push(`/listings/${data.id}`)
     } catch (err) {
