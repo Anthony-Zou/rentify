@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import Spinner from '@/components/Spinner'
 
 import { detectUniversity } from '@/lib/rental-utils'
 
@@ -142,7 +143,7 @@ export default function ProfileForm({ userId, userEmail, initialFullName, initia
           disabled={loading}
           className="px-5 py-2 bg-violet-600 text-white text-sm font-semibold rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? 'Saving…' : 'Save profile'}
+          {loading ? <span className="flex items-center justify-center gap-2"><Spinner className="w-4 h-4" />Saving…</span> : 'Save profile'}
         </button>
         {saved && <span className="text-sm text-green-600">Saved!</span>}
       </div>

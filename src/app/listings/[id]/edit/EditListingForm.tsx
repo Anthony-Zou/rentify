@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase'
+import Spinner from '@/components/Spinner'
 
 const CATEGORIES = ['Cameras', 'Gaming', 'Audio', 'Sports', 'Electronics', 'Other']
 
@@ -275,7 +276,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
         disabled={loading || deleting}
         className="w-full py-2.5 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        {loading ? 'Saving…' : 'Save changes'}
+        {loading ? <span className="flex items-center justify-center gap-2"><Spinner className="w-4 h-4" />Saving…</span> : 'Save changes'}
       </button>
 
       <button
@@ -284,7 +285,7 @@ export default function EditListingForm({ listing }: { listing: Listing }) {
         disabled={loading || deleting}
         className="w-full py-2.5 border border-red-200 text-red-600 text-sm font-medium rounded-lg hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        {deleting ? 'Deleting…' : 'Delete listing'}
+        {deleting ? <span className="flex items-center justify-center gap-2"><Spinner className="w-4 h-4" />Deleting…</span> : 'Delete listing'}
       </button>
     </form>
   )

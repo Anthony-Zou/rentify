@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase'
 import { calcDays, findOverlap, type BlockedRange } from '@/lib/rental-utils'
+import Spinner from '@/components/Spinner'
 
 export default function RequestForm({
   listingId,
@@ -145,7 +146,7 @@ export default function RequestForm({
         disabled={loading}
         className="w-full py-2.5 bg-violet-600 text-white text-sm font-medium rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        {loading ? 'Sending…' : 'Request to Rent →'}
+        {loading ? <span className="flex items-center justify-center gap-2"><Spinner className="w-4 h-4" />Sending…</span> : 'Request to Rent →'}
       </button>
     </form>
   )

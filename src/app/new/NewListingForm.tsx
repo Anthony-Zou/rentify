@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import AIComingSoon from '@/components/AIComingSoon'
+import Spinner from '@/components/Spinner'
 
 const CATEGORIES = ['Cameras', 'Gaming', 'Audio', 'Sports', 'Electronics', 'Other']
 
@@ -268,7 +269,7 @@ export default function NewListingForm({ userId }: { userId: string }) {
         disabled={loading}
         className="w-full py-2.5 bg-violet-600 text-white text-sm font-semibold rounded-lg hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
-        {loading ? 'Posting…' : 'Post item'}
+        {loading ? <span className="flex items-center justify-center gap-2"><Spinner className="w-4 h-4" />Posting…</span> : 'Post item'}
       </button>
     </form>
   )
