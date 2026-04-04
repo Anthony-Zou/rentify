@@ -20,7 +20,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
   const [listingResult, userResult] = await Promise.all([
     supabase
       .from('listings')
-      .select('id, title, description, daily_price, image_url, owner_id, is_available, category')
+      .select('id, title, description, daily_price, min_days, image_url, image_urls, owner_id, is_available, category')
       .eq('id', id)
       .single(),
     supabase.auth.getUser(),
@@ -76,18 +76,29 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
           />
         )}
 
-        {listing.image_url && (
-          <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden mb-6">
-            <Image
-              src={listing.image_url}
-              alt={listing.title}
-              fill
-              className="object-cover"
-              sizes="(max-width: 768px) 100vw, 672px"
-              priority
-            />
-          </div>
-        )}
+        {(() => {
+          const imgs: string[] = listing.image_urls?.length ? listing.image_urls : listing.image_url ? [listing.image_url] : []
+          if (imgs.length === 0) return null
+          if (imgs.length === 1) return (
+            <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden mb-6">
+              <Image src={imgs[0]} alt={listing.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 672px" priority />
+            </div>
+          )
+          return (
+            <div className="mb-6 space-y-2">
+              <div className="relative w-full aspect-[4/3] bg-gray-100 rounded-xl overflow-hidden">
+                <Image src={imgs[0]} alt={listing.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, 672px" priority />
+              </div>
+              <div className="grid grid-cols-4 gap-2">
+                {imgs.slice(1).map((url, i) => (
+                  <div key={i} className="relative aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                    <Image src={url} alt={`${listing.title} ${i + 2}`} fill className="object-cover" sizes="168px" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })()}
 
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-start justify-between gap-4 mb-4">
@@ -107,6 +118,9 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
             <div className="text-right shrink-0">
               <span className="text-2xl font-bold text-violet-600">${listing.daily_price}</span>
               <span className="text-sm text-gray-500 ml-1">/day</span>
+              {listing.min_days > 1 && (
+                <p className="text-xs text-gray-400 mt-0.5">{listing.min_days}-day minimum</p>
+              )}
             </div>
           </div>
 
@@ -208,6 +222,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                   ownerId={listing.owner_id}
                   renterId={user.id}
                   dailyPrice={listing.daily_price}
+                  minDays={listing.min_days ?? 1}
                   blockedRanges={blockedRanges}
                 />
               </>
@@ -217,6 +232,7 @@ export default async function ListingPage({ params }: { params: Promise<{ id: st
                 ownerId={listing.owner_id}
                 renterId={user.id}
                 dailyPrice={listing.daily_price}
+                minDays={listing.min_days ?? 1}
                 blockedRanges={blockedRanges}
               />
             )}

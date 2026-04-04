@@ -9,12 +9,14 @@ export default function RequestForm({
   ownerId,
   renterId,
   dailyPrice,
+  minDays,
   blockedRanges,
 }: {
   listingId: string
   ownerId: string
   renterId: string
   dailyPrice: number
+  minDays: number
   blockedRanges: BlockedRange[]
 }) {
   const today = new Date().toISOString().split('T')[0]
@@ -31,6 +33,12 @@ export default function RequestForm({
 
     if (endDate < startDate) {
       setError('End date must be on or after start date.')
+      return
+    }
+
+    const days = calcDays(startDate, endDate)
+    if (days < minDays) {
+      setError(`This listing requires a minimum of ${minDays} day${minDays > 1 ? 's' : ''}.`)
       return
     }
 
